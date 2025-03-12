@@ -28,7 +28,7 @@ RUN wget https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/ncbi-blast
     && md5sum -c ncbi-blast-2.16.0+-x64-linux.tar.gz.md5 || exit 1 \
     && tar xzf ncbi-blast-2.16.1+-x64-linux.tar.gz \
     && cp ncbi-blast-2.16.1+/bin/* /usr/local/bin/ \
-    && rm -rf ncbi-blast-2.16.1+-x64-linux.tar.gz ncbi-blast-2.16.1+/ \
+    && rm -rf ncbi-blast-2.16.1+-x64-linux.tar.gz ncbi-blast-2.16.1+/
 
 # Test that our tools installed correctly and are in our path!
 RUN for CMD in diamond blastn blastp; do \
