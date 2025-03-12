@@ -1,4 +1,4 @@
-MODULES = flye align-tools chopper canu basic hgtector kraken2 mummer4 nanoplot samtools
+MODULES = medaka multiqc flye align-tools chopper canu basic hgtector kraken2 mummer4 nanoplot samtools
 
 all:
 	for dir in $(MODULES); do \
