@@ -1,6 +1,12 @@
 # Start with a Python base image
 FROM python:3.9-slim
 
+LABEL org.opencontainers.image.authors="mfoster11@mgh.harvard.edu" \
+    org.opencontainers.image.source="https://github.com/mjfos2r/containers/hgtector" \
+    org.opencontainers.image.description="Container for hgtector" \
+    org.opencontainers.image.version="0.2.1" \
+    maintainer="mfoster11@mgh.harvard.edu"
+
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
@@ -26,9 +32,9 @@ RUN wget https://github.com/bbuchfink/diamond/releases/download/v2.1.10/diamond-
 RUN wget https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/ncbi-blast-2.16.0+-x64-linux.tar.gz \
     && wget https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/ncbi-blast-2.16.0+-x64-linux.tar.gz.md5 \
     && md5sum -c ncbi-blast-2.16.0+-x64-linux.tar.gz.md5 || exit 1 \
-    && tar xzf ncbi-blast-2.16.1+-x64-linux.tar.gz \
-    && cp ncbi-blast-2.16.1+/bin/* /usr/local/bin/ \
-    && rm -rf ncbi-blast-2.16.1+-x64-linux.tar.gz ncbi-blast-2.16.1+/
+    && tar -xzvf ncbi-blast-2.16.0+-x64-linux.tar.gz \
+    && cp ncbi-blast-2.16.0+/bin/* /usr/local/bin/ \
+    && rm -rf ncbi-blast-2.16.0+-x64-linux.tar.gz ncbi-blast-2.16.0+/
 
 # Test that our tools installed correctly and are in our path!
 RUN for CMD in diamond blastn blastp; do \
