@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim:latest
+FROM debian:bookworm-slim
 
 LABEL org.opencontainers.image.authors="mfoster11@mgh.harvard.edu" \
     org.opencontainers.image.source="https://github.com/mjfos2r/containers/kraken2" \

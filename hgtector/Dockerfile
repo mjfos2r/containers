@@ -53,7 +53,7 @@ RUN python setup.py install
 WORKDIR /app
 
 # Test that HGTector installed and is in path.
-command -v hgtector &>/dev/null || exit 1
+RUN command -v hgtector &>/dev/null || exit 1
 
 # Set environment variables to ensure Python outputs are sent directly to terminal
 ENV PYTHONUNBUFFERED=1
