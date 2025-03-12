@@ -61,7 +61,7 @@ RUN cd /usr/local/KronaTools && \
 
 # Test that our tools installed correctly and are in our path!
 RUN for CMD in ktImportText kreport2krona.py kraken2; do \
-    command -v $CMD &>/dev/null || echo "$CMD not found!" && exit 1; \
+    command -v $CMD &>/dev/null || exit 1; \
     done
 
 # Clean up

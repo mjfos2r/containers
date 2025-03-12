@@ -28,7 +28,7 @@ RUN tar -xzf /opt/mummer/mummer.tar.gz -C /opt/mummer --strip-components=1 --no-
 
 # Test that our tools installed correctly and are in our path!
 RUN for CMD in mummer nucmer promer; do \
-    command -v $CMD &>/dev/null || echo "$CMD not found!" && exit 1; \
+    command -v $CMD &>/dev/null || exit 1; \
     done
 
 # Change context to /opt

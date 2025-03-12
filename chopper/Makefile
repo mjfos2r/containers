@@ -1,4 +1,4 @@
-IMAGE_NAME = Chopper
+IMAGE_NAME = chopper
 VERSION = 0.1.0
 
 TAG1 = mjfos2r/$(IMAGE_NAME):$(VERSION)
