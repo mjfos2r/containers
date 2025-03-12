@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     wget \
     g++ \
-    gmake \
+    make \
     git \
     zlib1g-dev \
     libbz2-dev \
