@@ -1,0 +1,54 @@
+FROM python:3.11-slim
+
+# Metadata labels using OCI standard format
+LABEL org.opencontainers.image.authors="<mfoster11@mgh.harvard.edu>" \
+    org.opencontainers.image.source="https://github.com/username/repository" \
+    org.opencontainers.image.description="Description of your Python application" \
+    org.opencontainers.image.version="1.0.0" \
+    maintainer="<mfoster11@mgh.harvard.edu?"
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    wget \
+    # Add other dependencies as needed \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create directory structure
+RUN mkdir -p /db /data /opt/src
+
+# Set working directory
+WORKDIR /opt
+
+# Example of downloading and installing external tools
+# Uncomment and modify as needed
+# ENV TOOL_VERSION=X.Y.Z
+# RUN mkdir /tmp/tool
+# RUN wget -P /tmp/tool https://example.com/tool-TOOL_VERSION.tar.gz
+# RUN wget -P /tmp/tool https://example.com/tool-TOOL_VERSION.tar.gz.md5
+# RUN cd /tmp/tool && md5sum -c /tmp/tool/tool-TOOL_VERSION.tar.gz.md5 || exit 1
+# RUN tar -xzvf /tmp/tool/tool-TOOL_VERSION.tar.gz -C /tmp/tool/ --strip-components=1 --no-same-owner && \
+#     mv /tmp/tool/bin/* /usr/local/bin/
+# RUN rm -rf /tmp/tool
+
+# Copy requirements first for better layer caching
+COPY requirements.txt /opt/
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r /opt/requirements.txt
+
+# Copy application data files
+# COPY data_files.pkl /opt/
+
+# Copy database files if needed
+# COPY db /db /data /opt/src/
+
+# Copy application code
+COPY src /opt/src/
+COPY main.py /opt/
+
+# Set entrypoint
+ENTRYPOINT ["python", "/opt/main.py"]
+
+# Optional: specify default command arguments
+# CMD ["--help"]

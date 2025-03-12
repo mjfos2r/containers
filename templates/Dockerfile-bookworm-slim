@@ -1,0 +1,42 @@
+FROM debian:bookworm-slim
+LABEL org.opencontainers.image.authors="<mfoster11@mgh.harvard.edu>" \
+    org.opencontainers.image.source="https://github.com/username/repository" \
+    org.opencontainers.image.description="container for bioinformatics tool" \
+    org.opencontainers.image.version="1.0.0" \
+    maintainer="<mfoster11@mgh.harvard.edu>"
+
+# Install deps
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    wget \
+    # Add additional dependencies here \
+    && apt-get clean \
+    && apt-get autoremove \
+    && rm -rf /var/lib/apt/lists/*
+
+# Setup directories
+RUN mkdir -p /data /output /opt/tool
+
+# Download and install tool
+RUN wget -P /opt/tool -O /opt/tool/tool.tar.gz https://example.com/tool/download/url
+RUN tar -xzf /opt/tool/tool.tar.gz -C /opt/tool --strip-components=1 --no-same-owner \
+    && cd /opt/tool \
+    && ./configure --your-configure-options \
+    && make \
+    && make install
+
+# Verify installation
+RUN for cmd in tool1 tool2 tool3; do \
+    command -v cmd &>/dev/null || exit 1; \
+done
+
+# Set working directory
+WORKDIR /opt
+
+COPY [ "entrypoint.sh", "script.sh", "/opt/" ]
+
+# Make scripts executable
+RUN chmod +x /opt/entrypoint.sh /opt/script.sh
+
+# Set entrypoint
+ENTRYPOINT [ "/bin/bash", "entrypoint.sh" ]
