@@ -12,9 +12,11 @@ RUN apt-get update && apt-get install -y \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Diamond 2.1.11
+RUN mkdir /db
+
+# Install Diamond 2.1.10 (!!!SINCE DB WAS MADE WITH DIAMOND 2.1.10!!!)
 WORKDIR /tmp
-RUN wget https://github.com/bbuchfink/diamond/releases/download/v2.1.11/diamond-linux64.tar.gz \
+RUN wget https://github.com/bbuchfink/diamond/releases/download/v2.1.10/diamond-linux64.tar.gz \
     && tar xzf diamond-linux64.tar.gz \
     && mv diamond /usr/local/bin/ \
     && chmod +x /usr/local/bin/diamond \
@@ -27,6 +29,11 @@ RUN wget https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/ncbi-blast
     && tar xzf ncbi-blast-2.16.1+-x64-linux.tar.gz \
     && cp ncbi-blast-2.16.1+/bin/* /usr/local/bin/ \
     && rm -rf ncbi-blast-2.16.1+-x64-linux.tar.gz ncbi-blast-2.16.1+/ \
+
+# Test that our tools installed correctly and are in our path!
+RUN for cmd in diamond blastn blastp; do \
+    command -v cmd &>/dev/null || exit 1; \
+    done
 
 # Create a working directory
 WORKDIR /app
@@ -41,16 +48,18 @@ RUN git clone https://github.com/qiyunlab/HGTector.git
 WORKDIR /app/HGTector
 RUN python setup.py install
 
+
 # Return to app directory
 WORKDIR /app
+
+# Test that HGTector installed and is in path.
+command -v hgtector &>/dev/null || exit 1;\
 
 # Set environment variables to ensure Python outputs are sent directly to terminal
 ENV PYTHONUNBUFFERED=1
 
-# Test that all of the tools installed correctly and are in path!
-RUN for cmd in hgtector blastn blastp; do \
-    command -v cmd &>/dev/null || exit 1; \
-done
+# Set db location env variable
+ENV DB="/db/hgtector"
 
 # Default command when running the container
 CMD ["bash"]
