@@ -34,4 +34,4 @@ RUN git clone https://github.com/mikolmogorov/Flye.git \
 
 RUN command -v flye &>/dev/null || exit 1
 
-ENTRYPOINT ["python", "/opt/main.py"]
+ENTRYPOINT [ "/bin/bash" ]
