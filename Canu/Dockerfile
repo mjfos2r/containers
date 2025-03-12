@@ -22,7 +22,7 @@ RUN mkdir -p /data
 WORKDIR /tmp
 # Download and install tool
 RUN wget https://github.com/marbl/canu/releases/download/v2.3/canu-2.3.Linux-amd64.tar.xz \
-    && cat $(echo "5f5e537346f21e91393b0e5447f45bb3 canu-2.3.Linux-amd64.tar.xz") | md5sum -c - || exit 1 \
+    && echo "5f5e537346f21e91393b0e5447f45bb3 canu-2.3.Linux-amd64.tar.xz" | md5sum -c - || exit 1 \
     && tar -xJf /tmp/canu-2.3.Linux-amd64.tar.xz -C /usr/local/ --strip-components=1 --no-same-owner \
     && cp -r canu-2.3/bin canu-2.3/lib canu-2.3/share /usr/local \
     && rm -rf /tmp/canu-2.3*
