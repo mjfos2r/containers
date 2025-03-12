@@ -20,10 +20,8 @@ RUN apt-get update && apt-get install -y \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/*
 
-# Create temporary directories for installation
-RUN mkdir -p /tmp/kraken2 /tmp/KrakenTools /usr/local/KronaTools
-# Create database directories
-RUN mkdir -p /kraken2_dbs /krona_db
+# Create temp dirs and db dirs
+RUN mkdir -p /tmp/kraken2 /tmp/KrakenTools /usr/local/KronaTools /kraken2_dbs /krona_db
 
 # Download kraken2
 RUN wget -qO - https://github.com/DerrickWood/kraken2/archive/refs/tags/v2.1.3.tar.gz | \
@@ -47,9 +45,6 @@ RUN cd /tmp/KrakenTools && \
         chmod +x /usr/local/bin/$script; \
         done
 
-# After moving scripts
-RUN echo "PATH is: $PATH" >> /test.sh
-
 # Install KronaTools
 RUN cd /usr/local/KronaTools && \
     ./install.pl --taxonomy /krona_db
@@ -65,8 +60,8 @@ RUN cd /usr/local/KronaTools && \
 #    cd /
 
 # Test that our tools installed correctly and are in our path!
-RUN for cmd in ktImportText kreport2krona.py kraken2; do \
-    command -v cmd &>/dev/null || echo "$CMD not found!" && exit 1; \
+RUN for CMD in ktImportText kreport2krona.py kraken2; do \
+    command -v $CMD &>/dev/null || echo "$CMD not found!" && exit 1; \
     done
 
 # Clean up

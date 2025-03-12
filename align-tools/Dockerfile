@@ -54,8 +54,8 @@ RUN wget -qO- https://github.com/shenwei356/seqkit/releases/download/v2.9.0/seqk
     | tar -xz -C /usr/local/bin --no-same-owner
 
 # Test that our tools installed correctly and are in our path!
-RUN for cmd in samtools minimap2 seqkit; do \
-    command -v cmd &>/dev/null || echo "$CMD not found!" && exit 1; \
+RUN for CMD in samtools minimap2 seqkit; do \
+    command -v $CMD &>/dev/null || echo "$CMD not found!" && exit 1; \
     done
 
 # Change context to /opt

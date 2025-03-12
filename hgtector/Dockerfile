@@ -31,8 +31,8 @@ RUN wget https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/ncbi-blast
     && rm -rf ncbi-blast-2.16.1+-x64-linux.tar.gz ncbi-blast-2.16.1+/ \
 
 # Test that our tools installed correctly and are in our path!
-RUN for cmd in diamond blastn blastp; do \
-    command -v cmd &>/dev/null || exit 1; \
+RUN for CMD in diamond blastn blastp; do \
+    command -v $CMD &>/dev/null || exit 1; \
     done
 
 # Create a working directory
@@ -53,7 +53,7 @@ RUN python setup.py install
 WORKDIR /app
 
 # Test that HGTector installed and is in path.
-command -v hgtector &>/dev/null || exit 1;\
+command -v hgtector &>/dev/null || exit 1
 
 # Set environment variables to ensure Python outputs are sent directly to terminal
 ENV PYTHONUNBUFFERED=1
