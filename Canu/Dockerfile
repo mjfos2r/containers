@@ -1,4 +1,5 @@
 FROM openjdk:8
+
 LABEL org.opencontainers.image.authors="<mfoster11@mgh.harvard.edu>" \
     org.opencontainers.image.source="https://github.com/mjfos2r/containers/canu" \
     org.opencontainers.image.description="openjdk8 container for canu assembler 2.3" \
