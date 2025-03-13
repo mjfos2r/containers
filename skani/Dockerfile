@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/*
 
-RUN wget -p /usr/local/bin https://github.com/bluenote-1577/skani/releases/download/latest/skani \
+RUN wget https://github.com/bluenote-1577/skani/releases/download/latest/skani -O /usr/local/bin/skani \
     && chmod +x /usr/local/bin/skani
 
 RUN command -v skani &>/dev/null || exit 1
