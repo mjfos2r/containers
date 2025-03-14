@@ -2,7 +2,7 @@ FROM debian:bookworm-slim
 LABEL org.opencontainers.image.authors="<mfoster11@mgh.harvard.edu>" \
     org.opencontainers.image.source="https://github.com/mjfos2r/containers/miniasm" \
     org.opencontainers.image.description="Container for miniasm and minipolish" \
-    org.opencontainers.image.version="0.3.0" \
+    org.opencontainers.image.version="0.3.0"
 
 # Install deps
 RUN apt-get update && apt-get install -y \
@@ -16,6 +16,8 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /opt
 
 # Get minimap2 and install to path
 RUN wget -qO- https://github.com/lh3/minimap2/releases/download/v2.28/minimap2-2.28_x64-linux.tar.bz2 \
@@ -37,9 +39,12 @@ RUN git clone https://github.com/rrwick/Minipolish.git
     && pip3 install ./Minipolish \
     && mv Minipolish/miniasm_and_minipolish.sh /usr/local/bin/miniasm_and_minipolish.sh
 
+# install any2fasta
+RUN wget https://raw.githubusercontent.com/tseemann/any2fasta/master/any2fasta -o /usr/local/bin\
+    && chmod +x /usr/local/bin/any2fasta
 
 # Verify installation
-RUN for cmd in minimap2 k8 paftools.js miniasm minipolish miniasm_and_minipolish.sh; do \
+RUN for cmd in minimap2 k8 paftools.js miniasm minipolish miniasm_and_minipolish.sh any2fasta; do \
     command -v cmd &>/dev/null || exit 1; \
 done
 
