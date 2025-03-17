@@ -27,6 +27,8 @@ RUN apt-get update && apt-get install -y \
 
 RUN pip install --upgrade pip
 
+RUN mkdir -p /usr/local/src/htslib
+
 # Download and compile htslib
 RUN wget -qO- https://github.com/samtools/htslib/releases/download/1.21/htslib-1.21.tar.bz2 \
     | tar -xj -C /usr/local/src/htslib --strip-components=1 --no-same-owner \
