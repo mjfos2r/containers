@@ -20,6 +20,7 @@ RUN apt-get update && apt-get install -y \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/*
 
+RUN mkdir /tmp/muscle
 
 # Set working directory
 WORKDIR /opt
@@ -45,11 +46,14 @@ RUN wget -qO- https://github.com/marbl/Mash/releases/download/v2.3/mash-Linux64-
     && chmod +x /usr/local/bin/mash \
     && rm /usr/local/bin/LICENSE.txt
 
-# download muscle_v3 to PATH
-RUN wget -qO- https://drive5.com/muscle/downloads3.8.31/muscle3.8.31_i86linux64.tar.gz \
-    | tar -xzf -C /usr/local/bin \
-    && mv /usr/local/bin/muscle3.8.31_i86linux64 /usr/local/bin/muscle \
-    && chmod +x /usr/local/bin/muscle
+# download muscle_v3, compile, and move binary to path.
+RUN wget -qO- https://drive5.com/muscle/muscle_src_3.8.1551.tar.gz \
+    | tar -xzf -C /tmp/muscle \
+    && cd /tmp/muscle \
+    && make \
+    && cd ../
+    && mv /tmp/muscle/muscle /usr/local/bin/muscle \
+    && rm -rf /tmp/muscle
 
 # Install required R packages for trycycler cluster step.
 RUN R -e "install.packages(c('ape', 'phangorn'), repos='https://cloud.r-project.org/')"
