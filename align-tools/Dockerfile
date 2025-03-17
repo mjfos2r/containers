@@ -49,12 +49,16 @@ RUN wget -qO- https://github.com/samtools/samtools/releases/download/1.21/samtoo
     && make \
     && make install
 
-# Download and Install SeqKit
+# Download SeqKit to PATH
 RUN wget -qO- https://github.com/shenwei356/seqkit/releases/download/v2.9.0/seqkit_linux_amd64.tar.gz \
     | tar -xz -C /usr/local/bin --no-same-owner
 
+# Download muscle_v5 to PATH
+RUN wget -q https://github.com/rcedgar/muscle/releases/download/v5.3/muscle-linux-x86.v5.3 \
+    -O /usr/local/bin/muscle
+
 # Test that our tools installed correctly and are in our path!
-RUN for CMD in samtools minimap2 seqkit; do \
+RUN for CMD in samtools minimap2 seqkit muscle; do \
     command -v $CMD &>/dev/null || exit 1; \
     done
 
