@@ -46,13 +46,10 @@ RUN git clone https://github.com/nanoporetech/medaka.git \
 
 WORKDIR /opt
 
-RUN cat > entrypoint.sh << EOF
-#!/bin/bash
-source /app/medaka/venv/bin/activate
-exec "\$@"
-EOF
-
-RUN chmod +x entrypoint.sh
+RUN echo '#!/bin/bash' > /opt/entrypoint.sh \
+    && echo 'source /app/medaka/venv/bin/activate' >> /opt/entrypoint.sh \
+    && echo 'exec "$@"' >> /opt/entrypoint.sh \
+    && chmod +x /opt/entrypoint.sh
 
 # Test that our tools installed correctly and are in our path!
 RUN source /app/medaka/venv/bin/activate \
