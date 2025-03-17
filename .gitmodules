@@ -1,3 +1,6 @@
 [submodule "multiqc"]
 	path = multiqc
 	url = https://github.com/mjfos2r/multiqc.git
+[submodule "bakta"]
+	path = bakta
+	url = https://github.com/mjfos2r/bakta.git
