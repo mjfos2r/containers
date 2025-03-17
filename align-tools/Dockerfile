@@ -58,8 +58,8 @@ RUN wget -q https://github.com/rcedgar/muscle/releases/download/v5.3/muscle-linu
     -O /usr/local/bin/muscle
 
 # Test that our tools installed correctly and are in our path!
-RUN for CMD in samtools minimap2 seqkit muscle; do \
-    command -v $CMD &>/dev/null || exit 1; \
+RUN for cmd in samtools minimap2 seqkit muscle; do \
+    command -v cmd &>/dev/null || exit 1; \
     done
 
 # Change context to /opt
@@ -67,4 +67,3 @@ WORKDIR /opt
 
 # Set entrypoint
 ENTRYPOINT [ "/bin/bash" ]
-CMD [ "minimap2", "--help" ]
