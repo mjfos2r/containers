@@ -39,9 +39,18 @@ RUN mkdir -p /app/medaka
 WORKDIR /app
 # install medaka from source using git-lfs as configured above
 # htslib, samtools, and minimap2 are also built from source in this process.
-RUN git clone https://github.com/nanoporetech/medaka.git \
-    && cd medaka \
-    && make install
+RUN git clone https://github.com/nanoporetech/medaka.git
+
+WORKDIR /app/medaka
+
+# make the venv before running make install so we can ensure all requirements are built.
+# since ONT's makefile fails to do this.
+RUN python -m venv venv --prompt "medaka" \
+    && ./venv/bin/pip install pip wheel setuptools --upgrade \
+    && ./venv/bin/pip install --no-cache-dir -r requirements.txt
+
+# now try to make install
+RUN make install
 
 WORKDIR /opt
 
