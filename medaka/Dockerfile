@@ -12,6 +12,9 @@ RUN apt-get update && apt-get install -y \
     automake \
     make \
     wget \
+    curl \
+    ca-certificates \
+    git \
     gcc \
     perl \
     zlib1g-dev \
@@ -20,50 +23,42 @@ RUN apt-get update && apt-get install -y \
     libcurl4-openssl-dev \
     libssl-dev \
     libncurses5-dev \
-    libdeflate-dev \
+    libdeflate-dev
+
+# prep the repo to install git-lfs
+RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+RUN apt-get update && apt-get -y \
+    git-lfs \
     && apt-get clean \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --upgrade pip
 
-RUN mkdir -p /usr/local/src/htslib /usr/local/src/samtools /tmp/minimap2
-
-# Download and compile htslib
-RUN wget -qO- https://github.com/samtools/htslib/releases/download/1.21/htslib-1.21.tar.bz2 \
-    | tar -xj -C /usr/local/src/htslib --strip-components=1 --no-same-owner \
-    && cd /usr/local/src/htslib \
-    && ./configure --prefix=/usr/local/ \
-    && make \
+RUN mkdir /app/medaka
+# Set working directory for medaka installation
+WORKDIR /app
+# install medaka from source using git-lfs as configured above
+# htslib, samtools, and minimap2 are also built from source in this process.
+RUN git clone https://github.com/nanoporetech/medaka.git \
+    && cd medaka \
     && make install
 
-# Get and compile samtools
-RUN wget -qO- https://github.com/samtools/samtools/releases/download/1.21/samtools-1.21.tar.bz2 \
-    | tar -xj -C /usr/local/src/samtools --strip-components=1 --no-same-owner \
-    && cd /usr/local/src/samtools \
-    && ./configure --prefix=/usr/local/ \
-    && make \
-    && make install
-
-# Download minimap2 and install to path
-RUN wget -qO- https://github.com/lh3/minimap2/releases/download/v2.28/minimap2-2.28_x64-linux.tar.bz2 \
-    | tar xj -C /tmp/minimap2 --strip-components=1 --no-same-owner \
-    && mv /tmp/minimap2/minimap2 /usr/local/bin/minimap2 \
-    && mv /tmp/minimap2/k8 /usr/local/bin/k8 \
-    && mv /tmp/minimap2/paftools.js /usr/local/bin/paftools.js \
-    && mv /tmp/minimap2/minimap2.1 /usr/local/share/man/minimap2.1 \
-    && rm /tmp/minimap2/* \
-    && rmdir /tmp/minimap2
-
-# Set working directory
 WORKDIR /opt
 
-# Install Python dependencies
-RUN pip install --no-cache-dir medaka
+RUN cat > entrypoint.sh << 'EOF'
+    #!/bin/bash
+    source /app/medaka/venv/bin/activate
+    exec "$@"
+    EOF
+
+RUN chmod +x entrypoint.sh
 
 # Test that our tools installed correctly and are in our path!
-RUN for cmd in samtools minimap2 tabix medaka; do \
+RUN source /app/medaka/venv/bin/activate \
+    && for cmd in samtools minimap2 tabix medaka; do \
     command -v cmd &>/dev/null || exit 1; \
     done
 
-ENTRYPOINT [ "/bin/bash" ]
+ENTRYPOINT [ "/opt/entrypoint.sh" ]
+CMD [ "medaka", "--version" ]
