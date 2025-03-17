@@ -41,7 +41,7 @@ RUN wget -qO- https://github.com/samtools/htslib/releases/download/1.21/htslib-1
 # Download and install samtools
 RUN wget -qO- https://github.com/samtools/samtools/releases/download/1.21/samtools-1.21.tar.bz2 \
 && tar -xj -C /usr/local/src/samtools --strip-components=1 \
-&& cd /usr/local/src/samtools
+&& cd /usr/local/src/samtools \
 && ./configure --prefix=/usr/local \
 && make \
 && make test \
