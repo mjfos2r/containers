@@ -1,5 +1,5 @@
 IMAGE_NAME = medaka
-VERSION = 1.0.0
+VERSION = 2.0.1
 
 TAG1 = mjfos2r/$(IMAGE_NAME):$(VERSION)
 TAG2 = mjfos2r/$(IMAGE_NAME):latest
