@@ -27,7 +27,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN pip install --upgrade pip
 
-RUN mkdir -p /usr/local/src/htslib /usr/local/src/samtools /tmp/
+RUN mkdir -p /usr/local/src/htslib /usr/local/src/samtools /tmp/minimap2
 
 
 # Download and compile htslib
