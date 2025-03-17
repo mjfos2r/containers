@@ -35,8 +35,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN pip install --upgrade pip
 
-RUN mkdir /app/medaka
-# Set working directory for medaka installation
+RUN mkdir -p /app/medaka
 WORKDIR /app
 # install medaka from source using git-lfs as configured above
 # htslib, samtools, and minimap2 are also built from source in this process.
