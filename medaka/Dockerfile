@@ -27,7 +27,7 @@ RUN apt-get update && apt-get install -y \
 
 # prep the repo to install git-lfs
 RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash
-RUN apt-get update && apt-get -y \
+RUN apt-get update && apt-get install -y \
     git-lfs \
     && apt-get clean \
     && apt-get autoremove \
