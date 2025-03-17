@@ -2,7 +2,7 @@ FROM debian:bookworm-slim
 LABEL org.opencontainers.image.authors="mfoster11@mgh.harvard.edu" \
     org.opencontainers.image.source="https://github.com/mjfos2r/containers/align" \
     org.opencontainers.image.description="Container for Minimap2 with samtools, htslib, and seqkit for use in pipelines." \
-    org.opencontainers.image.version="0.1.1" \
+    org.opencontainers.image.version="0.2.0" \
     maintainer="mfoster11@mgh.harvard.edu"
 # Install deps
 RUN apt-get update && apt-get install -y \

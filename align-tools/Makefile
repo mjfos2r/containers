@@ -1,5 +1,5 @@
 IMAGE_NAME = align-tools
-VERSION = 0.1.1
+VERSION = 0.2.0
 
 TAG1 = mjfos2r/$(IMAGE_NAME):$(VERSION)
 TAG2 = mjfos2r/$(IMAGE_NAME):latest
