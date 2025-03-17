@@ -50,6 +50,7 @@ RUN python -m venv venv --prompt "medaka" \
     && ./venv/bin/pip install --no-cache-dir -r requirements.txt
 
 # now try to make install
+# Wait after looking at their dockerfile maybe I should specify make install_root? idk
 RUN make install
 
 WORKDIR /opt
