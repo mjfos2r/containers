@@ -26,7 +26,7 @@ RUN apt-get update && apt-get install -y \
     libdeflate-dev
 
 # prep the repo to install git-lfs
-RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash
 RUN apt-get update && apt-get -y \
     git-lfs \
     && apt-get clean \
