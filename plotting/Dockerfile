@@ -11,6 +11,7 @@ LABEL org.opencontainers.image.authors="<mfoster11@mgh.harvard.edu>" \
 RUN apt-get update && apt-get install -y \
     build-essential \
     wget \
+    zlib1g-dev \ 
     && apt-get clean \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/*
