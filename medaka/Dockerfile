@@ -27,27 +27,27 @@ RUN apt-get update && apt-get install -y \
 
 RUN pip install --upgrade pip
 
-RUN mkdir -p /usr/local/src/htslib
+RUN mkdir -p /usr/local/src/htslib /usr/local/src/samtools /tmp/
+
 
 # Download and compile htslib
 RUN wget -qO- https://github.com/samtools/htslib/releases/download/1.21/htslib-1.21.tar.bz2 \
-    | tar -xj -C /usr/local/src/htslib --strip-components=1 --no-same-owner \
-    && cd /usr/local/src/htslib \
-    && ./configure --prefix=/usr/local/ \
-    && make \
-    && make install
+| tar -xj -C /usr/local/src/htslib --strip-components=1 --no-same-owner \
+&& cd /usr/local/src/htslib \
+&& ./configure --prefix=/usr/local/ \
+&& make \
+&& make install
 
 # Download and install samtools
-RUN mkdir -p /tmp/samtools \
-    && wget -O /tmp/samtools/samtools.tar.bz2 \
-    https://github.com/samtools/samtools/releases/download/1.21/samtools-1.21.tar.bz2 \
-    && tar -xjf /tmp/samtools/samtools.tar.bz2 -C /tmp/samtools --strip-components=1 \
-    && cd /tmp/samtools \
-    && ./configure --prefix=/usr/local \
-    && make \
-    && make test \
-    && make install \
-    && rm -rf /tmp/samtools
+RUN wget -qO- https://github.com/samtools/samtools/releases/download/1.21/samtools-1.21.tar.bz2 \
+&& tar -xj -C /usr/local/src/samtools --strip-components=1 \
+&& cd /usr/local/src/samtools
+&& ./configure --prefix=/usr/local \
+&& make \
+&& make test \
+&& make install
+
+WORKDIR /opt
 
 # Download minimap2 and install to path
 RUN wget -qO- https://github.com/lh3/minimap2/releases/download/v2.28/minimap2-2.28_x64-linux.tar.bz2 \
