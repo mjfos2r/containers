@@ -1,8 +1,10 @@
 align-tools
 bakta
 basic
+basic-python
 canu
 chopper
+dorado
 flye
 hgtector
 kraken2
@@ -15,6 +17,7 @@ necat
 nextdenovo
 plotting
 quast
+ragtag
 raven
 samtools
 skani

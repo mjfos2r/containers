@@ -4,7 +4,7 @@ FROM python:3.11-slim
 LABEL org.opencontainers.image.authors="<mfoster11@mgh.harvard.edu>" \
     org.opencontainers.image.source="https://github.com/mjfos2r/containers/basic-python" \
     org.opencontainers.image.description="Basic python3.11-slim container with pigz and other utils." \
-    org.opencontainers.image.version="3.11-slim" \
+    org.opencontainers.image.version="3.11-slim"
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
