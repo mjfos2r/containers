@@ -1,5 +1,5 @@
 IMAGE_NAME = basic-python
-VERSION = 3.11
+VERSION = 3.11-slim
 
 TAG1 = mjfos2r/$(IMAGE_NAME):$(VERSION)
 TAG2 = mjfos2r/$(IMAGE_NAME):latest
