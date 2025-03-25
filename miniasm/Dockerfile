@@ -35,12 +35,12 @@ RUN git clone https://github.com/lh3/miniasm.git  \
     && make
 
 # clone and install minipolish
-RUN git clone https://github.com/rrwick/Minipolish.git
+RUN git clone https://github.com/rrwick/Minipolish.git \
     && pip3 install ./Minipolish \
     && mv Minipolish/miniasm_and_minipolish.sh /usr/local/bin/miniasm_and_minipolish.sh
 
 # install any2fasta
-RUN wget https://raw.githubusercontent.com/tseemann/any2fasta/master/any2fasta -o /usr/local/bin\
+RUN wget https://raw.githubusercontent.com/tseemann/any2fasta/master/any2fasta -o /usr/local/bin \
     && chmod +x /usr/local/bin/any2fasta
 
 # Verify installation
