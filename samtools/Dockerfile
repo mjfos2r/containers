@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     libncurses5-dev \
     libdeflate-dev \
+    pigz \
     && apt-get clean \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/*
