@@ -20,8 +20,14 @@ RUN wget -q https://github.com/wdecoster/chopper/releases/download/v0.9.1/choppe
     && rm /tmp/chopper.zip \
     && chmod +x /usr/local/bin/chopper
 
+# Download and Install SeqKit
+RUN wget -qO- https://github.com/shenwei356/seqkit/releases/download/v2.9.0/seqkit_linux_amd64.tar.gz \
+| tar -xz -C /usr/local/bin --no-same-owner \
+    && chmod +x /usr/local/bin/seqkit
+
 # Verify installation
 RUN command -v chopper &>/dev/null || exit 1
+RUN command -v seqkit &>/dev/null || exit 1
 
 # Set working directory
 WORKDIR /opt
