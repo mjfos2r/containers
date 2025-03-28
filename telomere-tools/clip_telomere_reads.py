@@ -1,5 +1,5 @@
 #!/usr/local/bin/python3
-
+import sys
 import gzip
 from Bio import SeqIO
 import statistics
