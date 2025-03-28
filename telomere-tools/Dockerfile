@@ -27,6 +27,6 @@ RUN wget -qO- https://github.com/shenwei356/seqkit/releases/download/v2.9.0/seqk
 # Install Python dependencies
 RUN pip install --no-cache-dir biopython pandas numpy
 
-COPY [ "clip_telomeric_reads.py", "filter_and_merge.py", "/opt"]
+COPY [ "clip_telomeric_reads.py", "merge_reads.py", "/opt"]
 # Set entrypoint
 ENTRYPOINT [ "/bin/bash" ]
