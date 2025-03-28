@@ -82,10 +82,15 @@ def writeFastq(clipped_reads, output):
         SeqIO.write(clipped_reads, output_handle, "fastq")
 
 if __name__ == "__main__":
-    # set up inputs and outputs for snakemake
-    bedfile = snakemake.input[0]
-    reads = snakemake.input[1]
-    output = snakemake.output[0]
+    # Check if correct number of arguments is provided
+    if len(sys.argv) != 4:
+        print_usage()
+
+    # Get command line arguments
+    bedfile = sys.argv[1]
+    reads_file = sys.argv[2]
+    output_file = sys.argv[3]
+
     # get the coordinates of the motif hits for all reads that have adjacent hits on separate strands
     motif_hits = get_double_motif_hit_coordinates_dict(bedfile)
     # parse fastq file and get reads with motif hits
