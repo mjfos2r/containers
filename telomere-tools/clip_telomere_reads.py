@@ -79,7 +79,7 @@ def clipReads(motif_reads, motif_hits) -> list: # list of SeqObjects
 
 def writeFastq(clipped_reads, output_file):
     # take list of SeqObjects and write to fastq file
-    with open(output, "w") as output_handle:
+    with open(output_file, "w") as output_handle:
         SeqIO.write(clipped_reads, output_handle, "fastq")
 
 if __name__ == "__main__":
