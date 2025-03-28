@@ -5,33 +5,28 @@ import statistics
 
 def get_double_motif_hit_coordinates_dict(bedfile) -> dict:
     reads_dict = {}
-    positive_strand_reads = set() # create set for positive strand reads
-    negative_strand_reads = set() # create set for negative strand reads
-    with open(bedfile, 'r') as file: # open the bedfile
-        for line in file: # loop through each line
-            # split the line into fields and grab the read_id and strand
+    with open(bedfile, 'r') as file:
+        for line in file:
             fields = line.strip().split('\t')
             read_id = fields[0]
             strand = fields[5]
-            # grab the start and end coordinates of the motif hit
             start = int(fields[1])
             end = int(fields[2])
-            length = end - start
-            # if the read id is not in the dictionary, create an empty list for that id
             if reads_dict.get(read_id) is None:
                 reads_dict[read_id] = []
-            # extract the coordinates of the motif hits for each strand
-            if strand == '+':
-                positive_strand_reads.add(read_id)
-                reads_dict[read_id].append({"+" : (start, end)})
-            elif strand == '-':
-                negative_strand_reads.add(read_id)
-                reads_dict[read_id].append({"-" : (start, end)})
-    # get the reads that have motif hits on both strands
-    paired_reads = positive_strand_reads.intersection(negative_strand_reads)
-    # filter the reads dictionary to only include reads with motif hits on both strands
-    reads_dict = {k: v for k, v in reads_dict.items() if k in paired_reads}
-    return reads_dict
+            reads_dict[read_id].append({strand: (start, end)})
+
+    # Keep reads with at least two hits on the same strand
+    filtered_reads = {}
+    for read_id, hits in reads_dict.items():
+        strand_counts = {'+': 0, '-': 0}
+        for hit in hits:
+            for strand in hit:
+                strand_counts[strand] += 1
+        if strand_counts['+'] >= 2 or strand_counts['-'] >= 2:
+            filtered_reads[read_id] = hits
+
+    return filtered_reads
 
 def parseFastqDict(reads_file, reads_dict) -> dict:
     reads = {}
@@ -44,40 +39,57 @@ def parseFastqDict(reads_file, reads_dict) -> dict:
                 continue
     return reads
 
-def clipReads(motif_reads, motif_hits) -> list: # list of SeqObjects
+def clipReads(motif_reads, motif_hits) -> list:
     clipped_reads = []
-    # loop through the reads with motif hits on both strands
-    for read in motif_reads:
-        current_read = motif_hits[read]
-        # loop through the motif hits for each read
-        for hit in current_read:
-            # get the coordinates of the motif hits for each strand
-            if hit.get("+"):
-                positive_hit = hit["+"]
-                continue
-            elif hit.get("-"):
-                neg_hit = hit["-"]
-            if abs(max(positive_hit) - min(neg_hit)) > 100: # and double this: this is double the 21bp motif length + 8bp.
-                continue
-            else:
-                telomeres = positive_hit + neg_hit
-                # get cut site based on shared coordinate.
-                cut_site = round(statistics.median(telomeres))
-                current_record = motif_reads[read]
-                # clip the reads at the cut site
-                clipped_1 = current_record[cut_site::]
-                clipped_2 = current_record[:cut_site:]
-                #rename clipped fragments
-                clipped_1.id = current_record.id + "_1"
-                clipped_2.id = current_record.id + "_2"
-                ## skip reads with very short fragments <- no.
-                #if len(clipped_1.seq) <10 or len(clipped_2.seq) < 10:
-                #    continue
-                #else:
-                # add the clipped reads to the list
-                clipped_reads.append(clipped_1)
-                clipped_reads.append(clipped_2)
+
+    for read_id, hits in motif_hits.items():
+        current_record = motif_reads[read_id]
+
+        plus_hits = [hit["+"] for hit in hits if "+" in hit]
+        minus_hits = [hit["-"] for hit in hits if "-" in hit]
+
+        if len(plus_hits) >= 2:
+            same_strand_hits = plus_hits
+        elif len(minus_hits) >= 2:
+            same_strand_hits = minus_hits
+        else:
+            continue
+
+        # Sort hits by start coord
+        same_strand_hits = sorted(same_strand_hits, key=lambda x: x[0])
+
+        # Use first two hits for now
+        hit1 = same_strand_hits[0]
+        hit2 = same_strand_hits[1]
+
+        # Determine the gap between the motifs using one end and one start
+        trim_coord_1 = hit1[1]  # end of hit1
+        trim_coord_2 = hit2[0]  # start of hit2
+
+
+        # Make sure coord1 < coord2 for correct midpoint calculation
+        lower, upper = sorted([trim_coord_1, trim_coord_2])
+        if upper - lower > 50: # this realistically shouldn't be over 30-40bp but let's make it 50 for safety
+            continue
+
+        # Midpoint between end of one hit and start of the other
+        cut_site = round((lower + upper) / 2)
+
+        # Clip the read
+        clipped_1 = current_record[cut_site:]
+        clipped_2 = current_record[:cut_site]
+
+        # append to read ids
+        clipped_1.id = current_record.id + "_1"
+        clipped_2.id = current_record.id + "_2"
+        clipped_1.description = ""
+        clipped_2.description = ""
+
+        clipped_reads.append(clipped_1)
+        clipped_reads.append(clipped_2)
+
     return clipped_reads
+
 
 def writeFastq(clipped_reads, output):
     # take list of SeqObjects and write to fastq file
