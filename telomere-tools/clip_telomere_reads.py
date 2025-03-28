@@ -1,3 +1,5 @@
+#!/usr/local/bin/python3
+
 import gzip
 import sys
 from Bio import SeqIO
