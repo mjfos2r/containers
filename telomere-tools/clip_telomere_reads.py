@@ -36,7 +36,8 @@ def get_double_motif_hit_coordinates_dict(bedfile) -> dict:
 
 def parseFastqDict(reads_file, reads_dict) -> dict:
     reads = {}
-    with gzip.open(reads_file, "rt") as reads_in:
+    #with gzip.open(reads_file, "rt") as reads_in:
+    with open(reads_file, "r") as reads_in:
         for record in SeqIO.parse(reads_in, "fastq"): # parse fastq with biopython
             # filter the reads to only include those with motif hits on both strands
             if record.id in reads_dict.keys():
