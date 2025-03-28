@@ -77,7 +77,7 @@ def clipReads(motif_reads, motif_hits) -> list: # list of SeqObjects
                 clipped_reads.append(clipped_2)
     return clipped_reads
 
-def writeFastq(clipped_reads, output):
+def writeFastq(clipped_reads, output_file):
     # take list of SeqObjects and write to fastq file
     with open(output, "w") as output_handle:
         SeqIO.write(clipped_reads, output_handle, "fastq")
@@ -99,4 +99,4 @@ if __name__ == "__main__":
     # clip reads at the point of symmetry between the two motif hits
     clipped_reads = clipReads(motif_reads, motif_hits)
     # write the clipped reads to a new fastq file
-    writeFastq(clipped_reads, output)
+    writeFastq(clipped_reads, output_file)
