@@ -94,7 +94,7 @@ if __name__ == "__main__":
     # get the coordinates of the motif hits for all reads that have adjacent hits on separate strands
     motif_hits = get_double_motif_hit_coordinates_dict(bedfile)
     # parse fastq file and get reads with motif hits
-    motif_reads = parseFastqDict(reads, motif_hits)
+    motif_reads = parseFastqDict(reads_file, motif_hits)
     # clip reads at the point of symmetry between the two motif hits
     clipped_reads = clipReads(motif_reads, motif_hits)
     # write the clipped reads to a new fastq file
