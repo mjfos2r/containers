@@ -20,13 +20,18 @@ def merge_fastq(filtered_fastq, clipped_fastq, output_fastq):
         with open(clipped_fastq, 'r') as clipped_handle:
             clipped_records = list(SeqIO.parse(clipped_handle, "fastq"))
             total_clipped = len(clipped_records)
+            print("Writing clipped records.")
             SeqIO.write(clipped_records, out_handle, "fastq")
+            print("Wrote clipped records.")
 
         # Write filtered reads
         with open(filtered_fastq, 'r') as filtered_handle:
             filtered_records = list(SeqIO.parse(filtered_handle, "fastq"))
             total_filtered = len(filtered_records)
+            print("Writing filtered records.")
             SeqIO.write(filtered_records, out_handle, "fastq")
+            print("Wrote filtered records.")
+
 
     print(f"Clipped reads: {total_clipped}")
     print(f"Filtered reads: {total_filtered}")
