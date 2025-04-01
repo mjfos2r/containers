@@ -11,7 +11,7 @@ LABEL org.opencontainers.image.authors="<mfoster11@mgh.harvard.edu>" \
 RUN apt-get update && apt-get install -y \
     build-essential \
     wget \
-    zlib1g-dev \ 
+    zlib1g-dev \
     && apt-get clean \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/*
@@ -24,7 +24,19 @@ RUN wget https://github.com/brentp/mosdepth/releases/download/v0.3.11/mosdepth \
     && chmod +x mosdepth \
     && mv mosdepth /usr/local/bin/mosdepth
 
+RUN mkdir -p /tmp/samtools \
+    && wget -O /tmp/samtools/samtools.tar.bz2 \
+    https://github.com/samtools/samtools/releases/download/1.21/samtools-1.21.tar.bz2 \
+    && tar -xjf /tmp/samtools/samtools.tar.bz2 -C /tmp/samtools --strip-components=1 \
+    && cd /tmp/samtools \
+    && ./configure --prefix=/usr/local \
+    && make \
+    && make test \
+    && make install \
+    && rm -rf /tmp/samtools
+
 RUN command -v mosdepth &>/dev/null || exit 1
+RUN command -v samtools &>/dev/null || exit 1
 
 COPY [ "requirements.txt", "/opt" ]
 
