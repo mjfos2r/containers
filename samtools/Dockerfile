@@ -30,7 +30,7 @@ RUN apt-get update && apt-get install -y \
 RUN mkdir -p /tmp/samtools \
     && wget -O /tmp/samtools/samtools.tar.bz2 \
     https://github.com/samtools/samtools/releases/download/1.21/samtools-1.21.tar.bz2 \
-    && tar -xjf /tmp/samtools/samtools.tar.bz2 -C /tmp/samtools --strip-components=1 \
+    && tar -xjf /tmp/samtools/samtools.tar.bz2 -C /tmp/samtools --strip-components=1 --no-same-owner \
     && cd /tmp/samtools \
     && ./configure --prefix=/usr/local \
     && make \
