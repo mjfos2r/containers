@@ -10,7 +10,6 @@ LABEL org.opencontainers.image.authors="<mfoster11@mgh.harvard.edu>" \
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
-    awk \
     wget \
     zlib1g-dev \
     libbz2-dev \
