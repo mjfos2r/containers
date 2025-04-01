@@ -10,8 +10,15 @@ LABEL org.opencontainers.image.authors="<mfoster11@mgh.harvard.edu>" \
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
+    awk \
     wget \
     zlib1g-dev \
+    libbz2-dev \
+    liblzma-dev \
+    libcurl4-openssl-dev \
+    libssl-dev \
+    libncurses5-dev \
+    libdeflate-dev \
     && apt-get clean \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/*

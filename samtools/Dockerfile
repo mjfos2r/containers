@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
     automake \
     make \
     wget \
+    awk \
     gcc \
     perl \
     zlib1g-dev \
