@@ -32,7 +32,7 @@ RUN git clone https://github.com/lh3/miniasm.git  \
 
 # Get minimap2 and install to path
 RUN wget -qO- https://github.com/lh3/minimap2/releases/download/v2.28/minimap2-2.28_x64-linux.tar.bz2 \
-    | tar xj -C /tmp/minimap2 --strip-components=1 --no-same-owner \
+    | tar -xj -C /tmp/minimap2 --strip-components=1 --no-same-owner \
     && mv /tmp/minimap2/minimap2 /usr/local/bin/minimap2 \
     && mv /tmp/minimap2/k8 /usr/local/bin/k8 \
     && mv /tmp/minimap2/paftools.js /usr/local/bin/paftools.js \
@@ -42,13 +42,13 @@ RUN wget -qO- https://github.com/lh3/minimap2/releases/download/v2.28/minimap2-2
 
 # Download mash binary to PATH and cleanup.
 RUN wget -qO- https://github.com/marbl/Mash/releases/download/v2.3/mash-Linux64-v2.3.tar \
-    | tar -xvf - --strip-components=1 --no-same-owner -C /usr/local/bin\
+    | tar -xv --strip-components=1 --no-same-owner -C /usr/local/bin\
     && chmod +x /usr/local/bin/mash \
     && rm /usr/local/bin/LICENSE.txt
 
 # download muscle_v3, compile, and move binary to path.
 RUN wget -qO- https://drive5.com/muscle/muscle_src_3.8.1551.tar.gz \
-    | tar -xzf - --no-same-owner -C /tmp/muscle \
+    | tar -xz --no-same-owner -C /tmp/muscle \
     && cd /tmp/muscle \
     && make \
     && cd ../ \
