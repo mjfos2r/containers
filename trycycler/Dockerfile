@@ -20,10 +20,10 @@ RUN apt-get update && apt-get install -y \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir /tmp/muscle
+RUN mkdir /tmp/muscle /tmp/minimap2
 
 # Set working directory
-WORKDIR /opt
+WORKDIR /tmp
 
 # clone and install miniasm (Trycycler dep 1)
 RUN git clone https://github.com/lh3/miniasm.git  \
@@ -57,18 +57,22 @@ RUN wget -qO- https://drive5.com/muscle/muscle_src_3.8.1551.tar.gz \
 
 # Install required R packages for trycycler cluster step.
 RUN R -e "install.packages(c('ape', 'phangorn'), repos='https://cloud.r-project.org/')"
+# Verify R installation
+RUN R -e "if (!all(c('ape', 'phangorn') %in% installed.packages()[,'Package'])) { quit(status=1) }"
+
+WORKDIR /opt
 
 # Install trycycler via pip
 RUN git clone https://github.com/rrwick/Trycycler.git \
-    && pip install ./Trycycler
-
-# Verify R installation
-RUN R -e "if (!all(c('ape', 'phangorn') %in% installed.packages()[,'Package'])) { quit(status=1) }"
+    && pip install ./Trycycler \
+    && cp Trycycler/scripts/canu_trim.py /usr/local/bin/
 
 # Verify the rest of our installations
 RUN for cmd in minimap2 mash muscle trycycler; do \
     command -v cmd &>/dev/null || exit 1; \
     done
+
+RUN command -v python3 /usr/local/bin/canu_trim.py &>/dev/null || exit 1;
 
 # Set entrypoint
 ENTRYPOINT [ "/bin/bash" ]
