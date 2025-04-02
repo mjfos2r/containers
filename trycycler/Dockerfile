@@ -51,7 +51,7 @@ RUN wget -qO- https://drive5.com/muscle/muscle_src_3.8.1551.tar.gz \
     | tar -xzf -C /tmp/muscle \
     && cd /tmp/muscle \
     && make \
-    && cd ../
+    && cd ../ \
     && mv /tmp/muscle/muscle /usr/local/bin/muscle \
     && rm -rf /tmp/muscle
 
