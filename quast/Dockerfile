@@ -8,11 +8,10 @@ LABEL org.opencontainers.image.authors="<mfoster11@mgh.harvard.edu>" \
 RUN apt-get update && apt-get install -y \
     build-essential \
     make \
-    ar \
     wget \
     zlib1g-dev \
     python3-dev \
-    perl5 \
+    perl \
     && apt-get clean \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/*
