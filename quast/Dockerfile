@@ -20,7 +20,7 @@ RUN apt-get update && apt-get install -y \
     python3-simplejson \
     python3-joblib \
     locales \
-    python-pip && \
+    python3-pip && \
     locale-gen en_US.UTF-8 && \
     apt-get clean && \
     apt-get autoclean && \
