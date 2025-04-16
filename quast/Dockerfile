@@ -14,11 +14,11 @@ RUN apt-get update && apt-get install -y \
     g++ \
     make \
     perl \
-    python \
-    python-setuptools \
-    python-matplotlib \
-    python-simplejson \
-    python-joblib \
+    python3 \
+    python3-setuptools \
+    python3-matplotlib \
+    python3-simplejson \
+    python3-joblib \
     locales \
     python-pip && \
     locale-gen en_US.UTF-8 && \
