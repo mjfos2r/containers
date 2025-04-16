@@ -1,4 +1,4 @@
-IMAGE_NAME = Raven
+IMAGE_NAME = raven
 VERSION = 1.8.3
 
 TAG1 = mjfos2r/$(IMAGE_NAME):$(VERSION)
