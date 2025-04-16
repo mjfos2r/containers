@@ -29,7 +29,7 @@ RUN apt-get update && apt-get install -y \
 RUN mkdir /tmp/quast /tmp/bwa /tmp/minimap2
 # Download and install tool
 RUN wget -qO- https://github.com/ablab/quast/releases/download/quast_5.3.0/quast-5.3.0.tar.gz |\
-    tar -xz - -C /tmp/quast --strip-components=1 --no-same-owner \
+    tar -xz -C /tmp/quast --strip-components=1 --no-same-owner \
     && cd /tmp/quast \
     && python3 setup.py install_full
 
