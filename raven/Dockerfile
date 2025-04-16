@@ -26,8 +26,9 @@ RUN git clone https://github.com/lbcb-sci/raven.git \
     && cmake --build build \
     && cmake --install ./build
 
-# install python bindings
-RUN pip install git+git://github.com/lbcb-sci/raven.git@master
+## install python bindings
+## Nah, not for now. Don't feel like dealing with it.
+#RUN pip install git+git://github.com/lbcb-sci/raven.git@master
 
 # Verify installation
 RUN command -v raven &>/dev/null || exit 1
