@@ -42,7 +42,7 @@ RUN git clone https://github.com/rrwick/Minipolish.git \
     && mv Minipolish/miniasm_and_minipolish.sh /usr/local/bin/miniasm_and_minipolish.sh
 
 # install any2fasta
-RUN wget https://raw.githubusercontent.com/tseemann/any2fasta/master/any2fasta -o /usr/local/bin \
+RUN wget https://raw.githubusercontent.com/tseemann/any2fasta/master/any2fasta -o /usr/local/bin/any2fasta \
     && chmod +x /usr/local/bin/any2fasta
 
 # Verify installation
