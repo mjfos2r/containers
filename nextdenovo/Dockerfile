@@ -23,11 +23,11 @@ RUN pip install paralleltask --break-system-packages
 
 # Download and install NextDenovo
 RUN wget -qO- https://github.com/Nextomics/NextDenovo/releases/latest/download/NextDenovo.tgz |\
-    tar -xvz - --strip-components=1 --no-same-owner -C /opt/nextdenovo
+    tar -xvz --strip-components=1 --no-same-owner -C /opt/nextdenovo
 
 # Download and install NextPolish
 RUN wget -qO- https://github.com/Nextomics/NextPolish/releases/download/v1.4.1/NextPolish.tgz |\
-    tar -xvz - --strip-components=1 --no-same-owner -C /opt/nextpolish
+    tar -xvz --strip-components=1 --no-same-owner -C /opt/nextpolish
 
 # Verify installation
 RUN for cmd in nextdenovo nextpolish; do \
