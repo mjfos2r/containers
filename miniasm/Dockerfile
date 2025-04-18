@@ -19,6 +19,8 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /opt
 
+RUN mkdir /tmp/minimap2
+
 # Get minimap2 and install to path
 RUN wget -qO- https://github.com/lh3/minimap2/releases/download/v2.28/minimap2-2.28_x64-linux.tar.bz2 \
     | tar xj -C /tmp/minimap2 --strip-components=1 --no-same-owner \
