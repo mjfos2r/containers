@@ -38,7 +38,7 @@ RUN git clone https://github.com/lh3/miniasm.git  \
 
 # clone and install minipolish
 RUN git clone https://github.com/rrwick/Minipolish.git \
-    && pip3 install ./Minipolish \
+    && pip3 install ./Minipolish --break-system-packages \
     && mv Minipolish/miniasm_and_minipolish.sh /usr/local/bin/miniasm_and_minipolish.sh
 
 # install any2fasta
