@@ -19,7 +19,7 @@ RUN mkdir -p /data /opt/nextdenovo /opt/nextpolish
 
 WORKDIR /opt
 
-RUN pip install paralleltask
+RUN pip install paralleltask --break-system-packages
 
 # Download and install NextDenovo
 RUN wget -qO- https://github.com/Nextomics/NextDenovo/releases/latest/download/NextDenovo.tgz |\
