@@ -8,7 +8,6 @@ dorado
 flye
 hgtector
 kraken2
-medaka
 miniasm
 multiqc
 mummer4

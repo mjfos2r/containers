@@ -20,8 +20,6 @@ RUN apt-get update && apt-get install -y \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /tmp/flye
-
 WORKDIR /tmp
 
 RUN pip install --no-cache-dir setuptools
@@ -33,5 +31,7 @@ RUN git clone https://github.com/mikolmogorov/Flye.git \
     && rm -rf /tmp/Flye
 
 RUN command -v flye &>/dev/null || exit 1
+
+WORKDIR /opt
 
 ENTRYPOINT [ "/bin/bash" ]
