@@ -1,5 +1,5 @@
 IMAGE_NAME = quast
-VERSION = 5.3.0
+VERSION = 5.3.1
 
 TAG1 = mjfos2r/$(IMAGE_NAME):$(VERSION)
 TAG2 = mjfos2r/$(IMAGE_NAME):latest
