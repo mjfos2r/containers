@@ -1,5 +1,5 @@
 IMAGE_NAME = nanoplot
-VERSION = 0.1.0
+VERSION = 1.44.1
 
 TAG1 = mjfos2r/$(IMAGE_NAME):$(VERSION)
 TAG2 = mjfos2r/$(IMAGE_NAME):latest
