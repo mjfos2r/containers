@@ -1,0 +1,13 @@
+{
+    "save_workspace": "never",
+    "always_save_history": false,
+    "reuse_sessions_for_project_links": true,
+    "posix_terminal_shell": "bash",
+    "initial_working_directory": "~",
+    "num_spaces_for_tab": 4,
+    "auto_detect_indentation": true,
+    "continue_comments_on_newline": true,
+    "auto_append_newline": true,
+    "strip_trailing_whitespace": true,
+    "editor_theme": "Material"
+}

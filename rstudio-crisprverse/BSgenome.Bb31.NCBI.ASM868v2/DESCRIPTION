@@ -1,0 +1,13 @@
+Package: BSgenome.Bb31.NCBI.ASM868v2
+Title: Full genomic sequences for Borreliella burgdorferi b31 (NCBI assembly ASM868v2)
+Description: Full genomic sequences for Borreliella burgdorferi b31 as provided by NCBI (assembly ASM868v2, assembly accession GCF_000008685.2). The sequences are stored in DNAString objects.
+Version: 1.0.0
+Author: Michael Foster <nope@no.co>
+Maintainer: Michael Foster <nope@no.co>
+Depends: R (>= 4.2.0), GenomeInfoDb (>= 1.34.9), BSgenome (>= 1.66.1)
+Suggests: BSgenomeForge
+License: Artistic-2.0
+organism: Borreliella burgdorferi b31
+provider: NCBI
+genome: ASM868v2
+biocViews: AnnotationData, Genetics, BSgenome, Borreliella_b31

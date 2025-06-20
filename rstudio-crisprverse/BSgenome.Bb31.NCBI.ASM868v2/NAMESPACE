@@ -1,0 +1,10 @@
+import(GenomeInfoDb)
+import(BSgenome)
+
+### Don't export BSgenome.Bb31.NCBI.ASM868v2 or Bb31 (the new and
+### old names of the BSgenome object defined in this package): the object
+### is created and its 2 names are dynamically exported at load time (refer
+### to R/zzz.R for the details).
+#export(BSgenome.Bb31.NCBI.ASM868v2)
+#export(Bb31)
+

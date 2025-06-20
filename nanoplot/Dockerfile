@@ -12,9 +12,10 @@ WORKDIR /app
 
 RUN uv venv
 ENV PATH="/app/.venv/bin:$PATH"
-RUN uv pip install NanoPlot==1.44.1
+RUN uv pip install NanoPlot==1.44.1 multiqc
 # Verify installation
 RUN command -v NanoPlot &>/dev/null || exit 1
+RUN command -v multiqc &>/dev/null || exit 1
 
 # Set entrypoint
 ENTRYPOINT [ "/bin/bash" ]
