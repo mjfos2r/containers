@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y \
     libncurses5-dev \
     parallel \
     man-db \
+    cmake \
     && apt-get clean \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/*
@@ -66,7 +67,7 @@ RUN cd /usr/local/src && git clone --recursive https://github.com/lbcb-sci/racon
     && make install
 
 # get rebaler
-RUN cd /usr/local/src && git clone --recursive https://github.com/rrwick/Rebaler.git rebaler \
+RUN cd /usr/local/src && git clone --recursive https://github.com/mjfos2r/Rebaler.git rebaler \
     && cd rebaler \
     && uv tool install .
 
