@@ -1,4 +1,4 @@
-IMAGE_NAME = canu
+IMAGE_NAME = bb-ref-assemble
 VERSION = 1.0.0
 
 TAG1 = mjfos2r/$(IMAGE_NAME):$(VERSION)
