@@ -14,7 +14,7 @@ USER $MAMBA_USER
 
 # Create an "autocycler" environment with long-read assemblers. (added plassembler)
 RUN micromamba create -y -n autocycler python=3.12 -c conda-forge -c bioconda curl && \
-    for tool in canu flye lja metamdbg miniasm minimap2 minipolish necat nextdenovo nextpolish racon raven-assembler wtdbg "plassembler==1.8.0"; do \
+    for tool in canu flye lja metamdbg miniasm minimap2 minipolish necat nextdenovo nextpolish racon raven-assembler wtdbg "plassembler==1.8.0" unicycler; do \
         if micromamba install -y -n autocycler -c conda-forge -c bioconda "$tool"; then \
             printf " $tool" >> /tmp/installed_tools.txt; \
         else \
@@ -33,7 +33,7 @@ RUN curl -L -o autocycler.tar.gz $(curl -s https://api.github.com/repos/rrwick/A
     mv autocycler /opt/conda/envs/autocycler/bin/ && \
     rm autocycler.tar.gz
 
-# add plassembler download and env var setting. 
+# add plassembler download and env var setting.
 RUN plassembler download -d /tmp/plassembler_db
 ENV PLASSEMBLER_DB="/tmp/plassembler_db"
 
