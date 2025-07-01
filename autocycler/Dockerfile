@@ -40,4 +40,4 @@ ENV PLASSEMBLER_DB="/tmp/plassembler_db"
 
 SHELL ["/bin/bash", "-c"]
 # Set default command to Autocycler help and show missing/installed tools.
-CMD ["/bin/sh", "-c", "autocycler --help; echo \"\nInstalled tools:\"; cat /tmp/installed_tools.txt; echo \"\nMissing tools:\"; cat /tmp/missing_tools.txt; echo"]
+#CMD ["/bin/sh", "-c", "autocycler --help; echo \"\nInstalled tools:\"; cat /tmp/installed_tools.txt; echo \"\nMissing tools:\"; cat /tmp/missing_tools.txt; echo"]
