@@ -4,20 +4,6 @@ FROM mambaorg/micromamba:latest
 # https://github.com/rrwick/Autocycler/tree/main/pipelines/Dockerfile_by_Ryan_Wick
 # It has been adapted by Michael Foster
 
-# change to root and install parallel via apt for the assembly script and set up some other things for later in the build.
-USER root
-RUN apt-get update && apt-get install -y parallel \
-    && apt-get clean \
-    && apt-get autoremove \
-    && rm -rf /var/lib/apt/lists/*
-# also set up the dir for our plassembler_db while we're root.
-RUN mkdir -p /usr/local/share/plassembler \
-    && chown -R $MAMBA_USER:$MAMBA_USER /usr/local/share/plassembler
-# also add our entrypoint script to root
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-USER "$MAMBA_USER"
-
 # Create an "autocycler" environment with long-read assemblers. (added plassembler 1.8.0 and specified unicycler version 0.5.0)
 RUN micromamba create -y -n autocycler python=3.12 -c conda-forge -c bioconda curl && \
     for tool in canu flye lja metamdbg miniasm minimap2 minipolish necat nextdenovo nextpolish racon raven-assembler wtdbg "plassembler==1.8.0" "unicycler==0.5.0"; do \
@@ -41,11 +27,26 @@ RUN curl -L -o autocycler.tar.gz $(curl -s https://api.github.com/repos/rrwick/A
     mv autocycler /opt/conda/envs/autocycler/bin/ && \
     rm autocycler.tar.gz
 
+# change to root and install parallel via apt for the assembly script and set up some other things for later in the build.
+USER root
+RUN apt-get update && apt-get install -y parallel \
+    && apt-get clean \
+    && apt-get autoremove \
+    && rm -rf /var/lib/apt/lists/*
+
+# also set up the dir for our plassembler_db while we're root.
+RUN mkdir -p /usr/local/share/plassembler \
+    && chown -R $MAMBA_USER:$MAMBA_USER /usr/local/share/plassembler
+
+# also add our entrypoint script to root
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# since unicycler vanishes whenever plassembler goes looking, symlink it to global path.
+RUN ln -s /opt/conda/envs/autocycler/bin/unicycler /usr/local/bin/unicycler
+USER "$MAMBA_USER"
+
 # add plassembler download and env var setting.
 RUN plassembler download -d "$PLASSEMBLER_DB"
 
-# Set default command to Autocycler help and show missing/installed tools.
-#CMD ["/bin/sh", "-c", "autocycler --help; echo \"\nInstalled tools:\"; cat /tmp/installed_tools.txt; echo \"\nMissing tools:\"; cat /tmp/missing_tools.txt; echo"]
-
 ENTRYPOINT [ "/entrypoint.sh" ]
-CMD []

@@ -1,5 +1,5 @@
 IMAGE_NAME = autocycler
-VERSION = 0.5.0.04
+VERSION = 0.5.0.05
 
 TAG1 = mjfos2r/$(IMAGE_NAME):$(VERSION)
 TAG2 = mjfos2r/$(IMAGE_NAME):latest
