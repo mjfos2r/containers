@@ -33,7 +33,7 @@ RUN micromamba create -y -n autocycler python=3.12 -c conda-forge -c bioconda cu
 # Add the autocycler environment to PATH.
 ENV PATH="/opt/conda/envs/autocycler/bin:$PATH"
 # also set the global for plassembler_db
-ENV PLASSEMBLER_DB="/usr/local/share/plassembler"
+ENV PLASSEMBLER_DB="/usr/local/share/plassembler/db"
 
 # Download and install Autocycler (binary and scripts) from the latest release.
 RUN curl -L -o autocycler.tar.gz $(curl -s https://api.github.com/repos/rrwick/Autocycler/releases/latest | grep "browser_download_url.*linux-x86_64-musl.*tar.gz" | cut -d '"' -f 4) && \
