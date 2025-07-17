@@ -24,6 +24,8 @@ RUN curl -LsSf https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_
     && ln -s /usr/local/src/FastQC/fastqc /usr/local/bin/fastqc \
     && rm fastqc.zip
 
+# ensure UV is on the path please and thankyou.
+ENV PATH=/root/.local/bin:$PATH
 # Now install multiqc using uv :)
 RUN uv tool install multiqc
 
