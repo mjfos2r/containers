@@ -24,10 +24,12 @@ RUN curl -LsSf https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_
     && ln -s /usr/local/src/FastQC/fastqc /usr/local/bin/fastqc \
     && rm fastqc.zip
 
-# ensure UV is on the path please and thankyou.
-ENV PATH=/root/.local/bin:$PATH
+# make our venv.
+RUN uv venv /opt/venv
+ENV VIRTUAL_ENV=/opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 # Now install multiqc using uv :)
-RUN uv tool install multiqc
+RUN uv pip install pandoc pdflatex multiqc
 
 # Verify installation
 RUN for cmd in fastqc multiqc; do \
