@@ -29,7 +29,7 @@ RUN uv venv /opt/venv
 ENV VIRTUAL_ENV=/opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 # Now install multiqc using uv :)
-RUN uv pip install pandoc pdflatex multiqc
+RUN uv pip install multiqc
 
 # Verify installation
 RUN for cmd in fastqc multiqc; do \
