@@ -20,7 +20,7 @@ WORKDIR /opt
 # install fastqc and symlink to path.
 RUN curl -LsSf https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.12.1.zip \
     -o fastqc.zip \
-    && unzip fastqc.zip -d /usr/local/src/FastQC \
+    && unzip fastqc.zip -d /usr/local/src/ \
     && ln -s /usr/local/src/FastQC/fastqc /usr/local/bin/fastqc \
     && rm fastqc.zip
 
