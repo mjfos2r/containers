@@ -1,5 +1,5 @@
-IMAGE_NAME = miniasm
-VERSION = 0.3.0
+IMAGE_NAME = fastqc
+VERSION = v0.12.1
 
 TAG1 = mjfos2r/$(IMAGE_NAME):$(VERSION)
 TAG2 = mjfos2r/$(IMAGE_NAME):latest

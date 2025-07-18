@@ -2,7 +2,7 @@
 # Find all directories that begin with lowercase characters
 # exclude .git and .
 # then read from that generated file.
-# and build/push em to dockerhub?
+# and build/push em to docker.
 
 CONTAINERS_FILE = containers.txt
 
@@ -26,4 +26,4 @@ clean-containers:
 	rm -f $(CONTAINERS_FILE)
 
 # force regen the container list
-refresh-modules: clean-containers generate-containers-list 
+refresh-modules: clean-containers generate-containers-list

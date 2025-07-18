@@ -36,8 +36,5 @@ RUN for cmd in fastqc multiqc; do \
     command -v cmd &>/dev/null || exit 1; \
     done
 
-# Set working directory
-WORKDIR /opt
-
 # Set entrypoint
 ENTRYPOINT [ "/bin/bash" ]
