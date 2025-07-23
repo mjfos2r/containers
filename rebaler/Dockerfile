@@ -19,7 +19,7 @@ WORKDIR /opt
 RUN mkdir /tmp/minimap2 /tmp/racon
 
 # Get minimap2 and install to path
-RUN wget -qO- https://github.com/lh3/minimap2/releases/download/v2.28/minimap2-2.28_x64-linux.tar.bz2 \
+RUN curl -LsSf https://github.com/lh3/minimap2/releases/download/v2.28/minimap2-2.28_x64-linux.tar.bz2 \
     | tar xj -C /tmp/minimap2 --strip-components=1 --no-same-owner \
     && mv /tmp/minimap2/minimap2 /usr/local/bin/minimap2 \
     && mv /tmp/minimap2/k8 /usr/local/bin/k8 \
