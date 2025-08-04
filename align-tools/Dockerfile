@@ -8,6 +8,7 @@ LABEL org.opencontainers.image.authors="mfoster11@mgh.harvard.edu" \
 RUN apt-get update && apt-get install -y \
     build-essential \
     wget \
+    curl \
     ca-certificates \
     gnuplot \
     zlib1g-dev \
