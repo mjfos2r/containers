@@ -34,9 +34,9 @@ ENV VIRTUAL_ENV=/opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # we need to install racon now.
-RUN git clone --recursive https://github.com/lbcb-sci/racon.git /tmp/racon \
-    && cd /tmp/racon \
-    && mkdir build && cd $_ \
+RUN git clone --recursive https://github.com/lbcb-sci/racon.git /tmp/racon
+RUN cd /tmp/racon \
+    && mkdir build && cd build \
     && cmake -DCMAKE_BUILD_TYPE=Release .. \
     && make \
     && mv bin/racon /usr/local/bin/racon \

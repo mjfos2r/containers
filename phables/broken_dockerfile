@@ -1,0 +1,78 @@
+FROM ubuntu:20.04
+FROM gurobi/optimizer:latest
+COPY --from=ghcr.io/astral-sh/uv:0.7.19 /uv /uvx /bin/
+
+ENV DEBIAN_FRONTENT="noninteractive"
+
+ARG LIBFABRIC_VERSION=1.18.1
+
+RUN apt -y update && apt -y install \
+    build-essential \
+    wget \
+    doxygen \
+    gnupg gnupg2 \
+    curl \
+    apt-transport-https \
+    software-properties-common \
+    git \
+    vim \
+    gfortran \
+    libtool \
+    ninja-build \
+    libnuma-dev \
+    perl \
+    && apt -y remove --purge --auto-remove cmake \
+    && wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null\
+ | gpg --dearmor - | tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null \
+      && apt-add-repository -y "deb https://apt.kitware.com/ubuntu/ jammy-rc main" \
+      && apt -y update 
+
+# Build and install libfabric
+RUN (if [ -e /tmp/build ]; then rm -rf /tmp/build; fi;) \
+      && mkdir -p /tmp/build \
+      && cd /tmp/build \
+      && wget https://github.com/ofiwg/libfabric/archive/refs/tags/v${LIBFABRIC_VERSION}.tar.gz \
+      && tar xf v${LIBFABRIC_VERSION}.tar.gz \
+      && cd libfabric-${LIBFABRIC_VERSION} \ 
+      && ./autogen.sh \
+      && ./configure \
+      && make -j 16 \ 
+      && make install
+# Get minimap2 and install to path
+RUN wget -qO- https://github.com/lh3/minimap2/releases/download/v2.28/minimap2-2.28_x64-linux.tar.bz2 \
+    | tar xj -C /tmp/minimap2 --strip-components=1 --no-same-owner \
+    && mv /tmp/minimap2/minimap2 /usr/local/bin/minimap2 \
+    && mv /tmp/minimap2/k8 /usr/local/bin/k8 \
+    && mv /tmp/minimap2/paftools.js /usr/local/bin/paftools.js \
+    && mv /tmp/minimap2/minimap2.1 /usr/local/share/man/minimap2.1 \
+    && rm /tmp/minimap2/* \
+    && rmdir /tmp/minimap2
+
+# Get and compile htslib
+RUN wget -qO- https://github.com/samtools/htslib/releases/download/1.21/htslib-1.21.tar.bz2 \
+    | tar -xj -C /usr/local/src/htslib --strip-components=1 --no-same-owner \
+    && cd /usr/local/src/htslib \
+    && ./configure --prefix=/usr/local/ \
+    && make \
+    && make install
+
+# Get and compile samtools
+RUN wget -qO- https://github.com/samtools/samtools/releases/download/1.21/samtools-1.21.tar.bz2 \
+    | tar -xj -C /usr/local/src/samtools --strip-components=1 --no-same-owner \
+    && cd /usr/local/src/samtools \
+    && ./configure --prefix=/usr/local/ \
+    && make \
+    && make install
+
+# Get mmseqs
+RUN wget -qO- https://mmseqs.com/latest/mmseqs-linux-avx2.tar.gz \
+    | tar -xzv -C /usr/local/src/mmseqs --strip-components=1 --no-same-owner
+
+# 
+RUN git clone https://github.com/COL-IU/FragGeneScan.git \
+    && <fill in rest of build here> 
+
+ENV PATH="/root/.local/bin/:$PATH"
+
+RUN uv python install python3.10
+RUN uv pip install phables gurobipy koverage numpy pandas biopython python-igraph pysam networkx scipy more-itertools tqdm click metasnek 
