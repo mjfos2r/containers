@@ -1,5 +1,5 @@
 IMAGE_NAME = kraken2
-VERSION = 0.2.0
+VERSION = 2.1.3
 
 TAG1 = mjfos2r/$(IMAGE_NAME):$(VERSION)
 TAG2 = mjfos2r/$(IMAGE_NAME):latest

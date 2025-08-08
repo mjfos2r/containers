@@ -1,9 +1,4 @@
 FROM debian:bookworm-slim
-LABEL org.opencontainers.image.authors="mfoster11@mgh.harvard.edu" \
-    org.opencontainers.image.source="https://github.com/mjfos2r/containers/align" \
-    org.opencontainers.image.description="Container for Minimap2 with samtools, htslib, and seqkit for use in pipelines." \
-    org.opencontainers.image.version="0.2.0" \
-    maintainer="mfoster11@mgh.harvard.edu"
 # Install deps
 RUN apt-get update && apt-get install -y \
     build-essential \
@@ -25,7 +20,7 @@ RUN apt-get update && apt-get install -y \
 RUN mkdir -p /data /opt /tmp/minimap2 /usr/local/src/samtools /usr/local/src/htslib
 
 # Get minimap2 and install to path
-RUN wget -qO- https://github.com/lh3/minimap2/releases/download/v2.28/minimap2-2.28_x64-linux.tar.bz2 \
+RUN wget -qO- https://github.com/lh3/minimap2/releases/download/v2.30/minimap2-2.30_x64-linux.tar.bz2 \
     | tar xj -C /tmp/minimap2 --strip-components=1 --no-same-owner \
     && mv /tmp/minimap2/minimap2 /usr/local/bin/minimap2 \
     && mv /tmp/minimap2/k8 /usr/local/bin/k8 \
@@ -62,6 +57,8 @@ RUN wget -q https://github.com/rcedgar/muscle/releases/download/v5.3/muscle-linu
 RUN for cmd in samtools minimap2 seqkit muscle; do \
     command -v cmd &>/dev/null || exit 1; \
     done
+
+COPY [ "cat_as_fastq.py", "/usr/local/bin/" ]
 
 # Change context to /opt
 WORKDIR /opt
