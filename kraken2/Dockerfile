@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y \
 RUN uv venv /opt/venv
 ENV VIRTUAL_ENV=/opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
-RUN uv pip install biopython
+RUN uv pip install biopython rapidgzip
 
 # Create temp dirs and db dirs
 RUN mkdir -p /tmp/kraken2 /tmp/KrakenTools /usr/local/KronaTools /kraken2_dbs /krona_db
