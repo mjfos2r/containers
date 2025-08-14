@@ -8,9 +8,9 @@ FROM mambaorg/micromamba:latest
 RUN micromamba create -y -n autocycler python=3.12 -c conda-forge -c bioconda curl && \
     for tool in canu flye lja metamdbg miniasm minimap2 minipolish necat nextdenovo nextpolish racon raven-assembler wtdbg "plassembler==1.8.0" "unicycler==0.5.0"; do \
         if micromamba install -y -n autocycler -c conda-forge -c bioconda "$tool"; then \
-            printf " $tool" >> /tmp/installed_tools.txt; \
+            printf " $tool" | tee /tmp/installed_tools.txt; \
         else \
-            printf " $tool" >> /tmp/missing_tools.txt; \
+            printf " $tool" | tee /tmp/missing_tools.txt; \
         fi \
     done && \
     printf "\n" >> /tmp/installed_tools.txt && printf "\n" >> /tmp/missing_tools.txt && \
@@ -22,7 +22,8 @@ ENV PATH="/opt/conda/envs/autocycler/bin:$PATH"
 ENV PLASSEMBLER_DB="/usr/local/share/plassembler/db"
 
 # Download and install Autocycler (binary and scripts) from the latest release.
-RUN curl -L -o autocycler.tar.gz $(curl -s https://api.github.com/repos/rrwick/Autocycler/releases/latest | grep "browser_download_url.*linux-x86_64-musl.*tar.gz" | cut -d '"' -f 4) && \
+#RUN curl -L -o autocycler.tar.gz $(curl -s https://api.github.com/repos/rrwick/Autocycler/releases/latest | grep "browser_download_url.*linux-x86_64-musl.*tar.gz" | cut -d '"' -f 4) && \
+RUN curl -L -o autocycler.tar.gz https://github.com/rrwick/Autocycler/releases/download/v0.5.1/autocycler-linux-x86_64-musl-v0.5.1.tar.gz && \
     tar -xzf autocycler.tar.gz && \
     mv autocycler /opt/conda/envs/autocycler/bin/ && \
     rm autocycler.tar.gz
