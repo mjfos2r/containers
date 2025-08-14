@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     ca-certificates \
     perl \
+    pigz \
     zlib1g-dev \
     && apt-get clean \
     && apt-get autoremove \
