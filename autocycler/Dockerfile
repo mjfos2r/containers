@@ -48,5 +48,6 @@ USER "$MAMBA_USER"
 
 # add plassembler download and env var setting.
 RUN plassembler download -d "$PLASSEMBLER_DB"
+USER 0
 
 ENTRYPOINT [ "/entrypoint.sh" ]
