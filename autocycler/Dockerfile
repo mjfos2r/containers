@@ -8,9 +8,9 @@ FROM mambaorg/micromamba:latest
 RUN micromamba create -y -n autocycler python=3.12 -c conda-forge -c bioconda curl && \
     for tool in canu flye lja metamdbg miniasm minimap2 minipolish necat nextdenovo nextpolish racon raven-assembler wtdbg "plassembler==1.8.0" "unicycler==0.5.0"; do \
         if micromamba install -y -n autocycler -c conda-forge -c bioconda "$tool"; then \
-            printf " $tool" | tee /tmp/installed_tools.txt; \
+            printf " $tool" >>/tmp/installed_tools.txt; \
         else \
-            printf " $tool" | tee /tmp/missing_tools.txt; \
+            printf " $tool" >>/tmp/missing_tools.txt; \
         fi \
     done && \
     printf "\n" >> /tmp/installed_tools.txt && printf "\n" >> /tmp/missing_tools.txt && \
