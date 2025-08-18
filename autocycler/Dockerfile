@@ -45,10 +45,16 @@ RUN chmod +x /entrypoint.sh
 
 # since unicycler vanishes whenever plassembler goes looking, symlink it to global path.
 RUN ln -s /opt/conda/envs/autocycler/bin/unicycler /usr/local/bin/unicycler
+
+# Ensure directory traversal for arbitrary UIDs
+RUN chmod 755 /opt /opt/conda /opt/conda/envs /opt/conda/envs/autocycler /opt/conda/envs/autocycler/bin \
+ && chmod a+rx /opt/conda/envs/autocycler/bin/unicycler /opt/conda/envs/autocycler/bin/python*
+# Optional: fail build if unicycler is missing/broken
+RUN micromamba run -n autocycler unicycler --version
 USER "$MAMBA_USER"
 
 # add plassembler download and env var setting.
 RUN plassembler download -d "$PLASSEMBLER_DB"
-USER 0
+USER root
 
 ENTRYPOINT [ "/entrypoint.sh" ]
