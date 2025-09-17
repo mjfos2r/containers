@@ -5,16 +5,17 @@ FROM mambaorg/micromamba:latest
 # It has been adapted by Michael Foster
 
 # Create an "autocycler" environment with long-read assemblers. (added plassembler 1.8.0 and specified unicycler version 0.5.0)
-RUN micromamba create -y -n autocycler python=3.12 -c conda-forge -c bioconda curl && \
-    for tool in canu flye lja metamdbg miniasm minimap2 minipolish necat nextdenovo nextpolish racon raven-assembler wtdbg plassembler unicycler; do \
+RUN micromamba config --set channel_alias https://anaconda.mgb.org/ --set ssl_verify False \
+    && micromamba create -y -n autocycler python=3.12 -c conda-forge -c bioconda curl \
+    && for tool in canu flye lja metamdbg miniasm minimap2 minipolish necat nextdenovo nextpolish racon raven-assembler wtdbg plassembler unicycler; do \
         if micromamba install -y -n autocycler -c conda-forge -c bioconda "$tool"; then \
             printf " $tool" >>/tmp/installed_tools.txt; \
         else \
             printf " $tool" >>/tmp/missing_tools.txt; \
         fi \
-    done && \
-    printf "\n" >> /tmp/installed_tools.txt && printf "\n" >> /tmp/missing_tools.txt && \
-    micromamba clean --all --yes
+    done \
+    && printf "\n" >> /tmp/installed_tools.txt && printf "\n" >> /tmp/missing_tools.txt \
+    && micromamba clean --all --yes
 
 # Add the autocycler environment to PATH.
 ENV PATH="/opt/conda/envs/autocycler/bin:$PATH"
