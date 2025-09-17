@@ -17,11 +17,9 @@ RUN apt-get update && apt-get install -y \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/*
 
-# Setup all of our directories
-RUN mkdir -p /data /opt /tmp/minimap2 /usr/local/src/samtools /usr/local/src/htslib
-
 # Get minimap2 and install to path
-RUN wget -qO- https://github.com/lh3/minimap2/releases/download/v2.30/minimap2-2.30_x64-linux.tar.bz2 \
+RUN mkdir -p /tmp/minimap2 \
+    && wget -qO- https://github.com/lh3/minimap2/releases/download/v2.30/minimap2-2.30_x64-linux.tar.bz2 \
     | tar xj -C /tmp/minimap2 --strip-components=1 --no-same-owner \
     && mv /tmp/minimap2/minimap2 /usr/local/bin/minimap2 \
     && mv /tmp/minimap2/k8 /usr/local/bin/k8 \
@@ -31,15 +29,17 @@ RUN wget -qO- https://github.com/lh3/minimap2/releases/download/v2.30/minimap2-2
     && rmdir /tmp/minimap2
 
 # Get and compile htslib
-RUN wget -qO- https://github.com/samtools/htslib/releases/download/1.21/htslib-1.21.tar.bz2 \
+RUN mkdir -p /usr/local/src/htslib \
+    && wget -qO- https://github.com/samtools/htslib/releases/download/1.21/htslib-1.21.tar.bz2 \
     | tar -xj -C /usr/local/src/htslib --strip-components=1 --no-same-owner \
     && cd /usr/local/src/htslib \
-    && ./configure --prefix=/usr/local/ \
-    && make \
-    && make install
+    && sudo ./configure --prefix=/usr/local/ \
+    && sudo make \
+    && sudo make install
 
 # Get and compile samtools
-RUN wget -qO- https://github.com/samtools/samtools/releases/download/1.21/samtools-1.21.tar.bz2 \
+RUN mkdir -p /usr/local/src/samtools \
+    && wget -qO- https://github.com/samtools/samtools/releases/download/1.21/samtools-1.21.tar.bz2 \
     | tar -xj -C /usr/local/src/samtools --strip-components=1 --no-same-owner \
     && cd /usr/local/src/samtools \
     && ./configure --prefix=/usr/local/ \

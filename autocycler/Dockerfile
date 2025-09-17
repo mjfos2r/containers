@@ -6,7 +6,7 @@ FROM mambaorg/micromamba:latest
 
 # Create an "autocycler" environment with long-read assemblers. (added plassembler 1.8.0 and specified unicycler version 0.5.0)
 RUN micromamba create -y -n autocycler python=3.12 -c conda-forge -c bioconda curl && \
-    for tool in canu flye lja metamdbg miniasm minimap2 minipolish necat nextdenovo nextpolish racon raven-assembler wtdbg "plassembler==1.8.0" "unicycler==0.5.0"; do \
+    for tool in canu flye lja metamdbg miniasm minimap2 minipolish necat nextdenovo nextpolish racon raven-assembler wtdbg plassembler unicycler; do \
         if micromamba install -y -n autocycler -c conda-forge -c bioconda "$tool"; then \
             printf " $tool" >>/tmp/installed_tools.txt; \
         else \
@@ -48,13 +48,14 @@ RUN ln -s /opt/conda/envs/autocycler/bin/unicycler /usr/local/bin/unicycler
 
 # Ensure directory traversal for arbitrary UIDs
 RUN chmod 755 /opt /opt/conda /opt/conda/envs /opt/conda/envs/autocycler /opt/conda/envs/autocycler/bin \
- && chmod a+rx /opt/conda/envs/autocycler/bin/unicycler /opt/conda/envs/autocycler/bin/python*
+    && chmod a+rx /opt/conda/envs/autocycler/bin/unicycler /opt/conda/envs/autocycler/bin/python*
 # Optional: fail build if unicycler is missing/broken
 RUN micromamba run -n autocycler unicycler --version
-USER "$MAMBA_USER"
-
 # add plassembler download and env var setting.
 RUN plassembler download -d "$PLASSEMBLER_DB"
-USER root
+
+# Install Seqkit
+RUN curl -LsSf https://github.com/shenwei356/seqkit/releases/download/v2.10.1/seqkit_linux_amd64.tar.gz \
+    | tar -xz -C /usr/local/bin --no-same-owner
 
 ENTRYPOINT [ "/entrypoint.sh" ]
