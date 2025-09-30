@@ -28,6 +28,14 @@ RUN curl -L -o autocycler.tar.gz https://github.com/rrwick/Autocycler/releases/d
     mv autocycler /opt/conda/envs/autocycler/bin/ && \
     rm autocycler.tar.gz
 
+
+# Quick sanity check *inside* the env (fail fast if missing)
+RUN micromamba run -n autocycler which plassembler \
+    && micromamba run -n autocycler plassembler --version \
+    && micromamba run -n autocycler which unicycler \
+    && micromamba run -n autocycler autocycler --version
+
+
 # change to root and install parallel via apt for the assembly script and set up some other things for later in the build.
 USER root
 RUN apt-get update && apt-get install -y parallel \
