@@ -16,57 +16,40 @@ RUN micromamba create -y -n autocycler python=3.12 -c conda-forge -c bioconda cu
     && printf "\n" >> /tmp/installed_tools.txt && printf "\n" >> /tmp/missing_tools.txt \
     && micromamba clean --all --yes
 
-# Add the autocycler environment to PATH.
+# Put env bin on PATH for *all* users, including root
 ENV PATH="/opt/conda/envs/autocycler/bin:$PATH"
-# also set the global for plassembler_db
 ENV PLASSEMBLER_DB="/usr/local/share/plassembler/db"
 
-# Download and install Autocycler (binary and scripts) from the latest release.
-#RUN curl -L -o autocycler.tar.gz $(curl -s https://api.github.com/repos/rrwick/Autocycler/releases/latest | grep "browser_download_url.*linux-x86_64-musl.*tar.gz" | cut -d '"' -f 4) && \
-RUN curl -L -o autocycler.tar.gz https://github.com/rrwick/Autocycler/releases/download/v0.5.1/autocycler-linux-x86_64-musl-v0.5.1.tar.gz && \
-    tar -xzf autocycler.tar.gz && \
-    mv autocycler /opt/conda/envs/autocycler/bin/ && \
-    rm autocycler.tar.gz
-
-
-# Quick sanity check *inside* the env (fail fast if missing)
-RUN micromamba run -n autocycler which plassembler \
-    && micromamba run -n autocycler plassembler --version \
-    && micromamba run -n autocycler which unicycler \
-    && micromamba run -n autocycler autocycler --version
-
+# Autocycler binary
+RUN curl -L -o autocycler.tar.gz https://github.com/rrwick/Autocycler/releases/download/v0.5.1/autocycler-linux-x86_64-musl-v0.5.1.tar.gz \
+    && tar -xzf autocycler.tar.gz \
+    && mv autocycler /opt/conda/envs/autocycler/bin/ \
+    && rm autocycler.tar.gz
 
 # change to root and install parallel via apt for the assembly script and set up some other things for later in the build.
 USER root
 RUN apt-get update && apt-get install -y parallel \
-    && apt-get clean \
-    && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/*
 
-# also set up the dir for our plassembler_db while we're root.
-RUN mkdir -p /usr/local/share/plassembler \
-    && chown -R $MAMBA_USER:$MAMBA_USER /usr/local/share/plassembler
+RUN mkdir -p /usr/local/share/plassembler
 
-
-# also add our entrypoint script to root
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-# since unicycler vanishes whenever plassembler goes looking, symlink it to global path.
-RUN ln -sf /opt/conda/envs/autocycler/bin/unicycler   /usr/local/bin/unicycler   && \
-    ln -sf /opt/conda/envs/autocycler/bin/autocycler  /usr/local/bin/autocycler  && \
-    ln -sf /opt/conda/envs/autocycler/bin/plassembler /usr/local/bin/plassembler
+# Make sure key env binaries are visible globally (root, arbitrary UID)
+RUN ln -sf /opt/conda/envs/autocycler/bin/unicycler   /usr/local/bin/unicycler   \
+ && ln -sf /opt/conda/envs/autocycler/bin/autocycler  /usr/local/bin/autocycler  \
+ && ln -sf /opt/conda/envs/autocycler/bin/plassembler /usr/local/bin/plassembler
 
-# Ensure directory traversal for arbitrary UIDs
-RUN chmod 755 /opt /opt/conda /opt/conda/envs /opt/conda/envs/autocycler /opt/conda/envs/autocycler/bin \
-    && chmod a+rx /opt/conda/envs/autocycler/bin/unicycler /opt/conda/envs/autocycler/bin/python*
-# Optional: fail build if unicycler is missing/broken
-RUN micromamba run -n autocycler unicycler --version
-RUN micromamba run -n autocycler plassembler --version
-# add plassembler download and env var setting.
-RUN micromamba run -n autocycler plassembler download -d "$PLASSEMBLER_DB"
+# Sanity checks at build time (fail if missing)
+RUN unicycler --version \
+ && autocycler --version \
+ && plassembler --version
 
-# Install Seqkit
+# Download DB
+RUN plassembler download -d "$PLASSEMBLER_DB"
+
+# Seqkit
 RUN curl -LsSf https://github.com/shenwei356/seqkit/releases/download/v2.10.1/seqkit_linux_amd64.tar.gz \
     | tar -xz -C /usr/local/bin --no-same-owner
 
