@@ -6,7 +6,7 @@ FROM mambaorg/micromamba:latest
 
 # Create an "autocycler" environment with long-read assemblers. (added plassembler 1.8.0 and specified unicycler version 0.5.0)
 RUN micromamba create -y -n autocycler python=3.12 -c conda-forge -c bioconda curl \
-    && for tool in canu flye lja metamdbg miniasm minimap2 minipolish necat nextdenovo nextpolish racon raven-assembler wtdbg plassembler unicycler; do \
+    && for tool in canu flye lja metamdbg miniasm minimap2 minipolish necat nextdenovo nextpolish racon raven-assembler wtdbg "plassembler==1.8.1" "unicycler==0.5.1"; do \
         if micromamba install -y -n autocycler -c conda-forge -c bioconda "$tool"; then \
             printf " $tool" >>/tmp/installed_tools.txt; \
         else \
