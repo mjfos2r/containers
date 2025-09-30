@@ -39,6 +39,8 @@ RUN apt-get update && apt-get install -y parallel \
 RUN mkdir -p /usr/local/share/plassembler \
     && chown -R $MAMBA_USER:$MAMBA_USER /usr/local/share/plassembler
 
+RUN install -d -m 1777 /usr/local/share/plassembler
+
 # also add our entrypoint script to root
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
