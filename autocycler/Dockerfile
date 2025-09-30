@@ -28,8 +28,10 @@ RUN curl -L -o autocycler.tar.gz https://github.com/rrwick/Autocycler/releases/d
     mv autocycler /opt/conda/envs/autocycler/bin/ && \
     rm autocycler.tar.gz
 
+# expand permissions to all UIDs.
+RUN chmod -R a+rX /opt/conda/envs/autocycler
 # change to root and install parallel via apt for the assembly script and set up some other things for later in the build.
-
+USER root
 RUN apt-get update && apt-get install -y parallel \
     && apt-get clean \
     && apt-get autoremove \
@@ -44,7 +46,9 @@ COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # since unicycler vanishes whenever plassembler goes looking, symlink it to global path.
-RUN ln -s /opt/conda/envs/autocycler/bin/unicycler /usr/local/bin/unicycler
+RUN ln -sf /opt/conda/envs/autocycler/bin/unicycler   /usr/local/bin/unicycler   && \
+    ln -sf /opt/conda/envs/autocycler/bin/autocycler  /usr/local/bin/autocycler  && \
+    ln -sf /opt/conda/envs/autocycler/bin/plassembler /usr/local/bin/plassembler
 
 # Ensure directory traversal for arbitrary UIDs
 RUN chmod 755 /opt /opt/conda /opt/conda/envs /opt/conda/envs/autocycler /opt/conda/envs/autocycler/bin \
