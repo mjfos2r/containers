@@ -28,8 +28,6 @@ RUN curl -L -o autocycler.tar.gz https://github.com/rrwick/Autocycler/releases/d
     mv autocycler /opt/conda/envs/autocycler/bin/ && \
     rm autocycler.tar.gz
 
-# expand permissions to all UIDs.
-RUN chmod -R a+rX /opt/conda/envs/autocycler
 # change to root and install parallel via apt for the assembly script and set up some other things for later in the build.
 USER root
 RUN apt-get update && apt-get install -y parallel \
