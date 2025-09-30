@@ -29,7 +29,7 @@ RUN curl -L -o autocycler.tar.gz https://github.com/rrwick/Autocycler/releases/d
     rm autocycler.tar.gz
 
 # change to root and install parallel via apt for the assembly script and set up some other things for later in the build.
-USER root
+
 RUN apt-get update && apt-get install -y parallel \
     && apt-get clean \
     && apt-get autoremove \
