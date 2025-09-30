@@ -39,7 +39,6 @@ RUN apt-get update && apt-get install -y parallel \
 RUN mkdir -p /usr/local/share/plassembler \
     && chown -R $MAMBA_USER:$MAMBA_USER /usr/local/share/plassembler
 
-RUN install -d -m 1777 /usr/local/share/plassembler
 
 # also add our entrypoint script to root
 COPY entrypoint.sh /entrypoint.sh
@@ -55,8 +54,9 @@ RUN chmod 755 /opt /opt/conda /opt/conda/envs /opt/conda/envs/autocycler /opt/co
     && chmod a+rx /opt/conda/envs/autocycler/bin/unicycler /opt/conda/envs/autocycler/bin/python*
 # Optional: fail build if unicycler is missing/broken
 RUN micromamba run -n autocycler unicycler --version
+RUN micromamba run -n autocycler plassembler --version
 # add plassembler download and env var setting.
-RUN plassembler download -d "$PLASSEMBLER_DB"
+RUN micromamba run -n autocycler plassembler download -d "$PLASSEMBLER_DB"
 
 # Install Seqkit
 RUN curl -LsSf https://github.com/shenwei356/seqkit/releases/download/v2.10.1/seqkit_linux_amd64.tar.gz \
