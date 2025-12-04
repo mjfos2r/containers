@@ -1,15 +1,20 @@
 FROM debian:bookworm-slim
-LABEL org.opencontainers.image.authors="<mfoster11@mgh.harvard.edu>" \
-    org.opencontainers.image.source="https://github.com/username/repository" \
-    org.opencontainers.image.description="container for bioinformatics tool" \
-    org.opencontainers.image.version="1.0.0" \
-    maintainer="<mfoster11@mgh.harvard.edu>"
+
+# OCI formatted labels
+LABEL \
+    org.opencontainers.image.title="IMGNAMEPLACEHOLDER" \
+    org.opencontainers.image.authors="<mfoster11@mgh.harvard.edu>" \
+    org.opencontainers.image.url="https://github.com/mjfos2r/containers/IMGNAMEPLACEHOLDER" \
+    org.opencontainers.image.description="Debian bookworm-slim container for IMGNAMEPLACEHOLDER" \
+    org.opencontainers.image.version="0.0.1"
 
 # Install deps
 RUN apt-get update && apt-get install -y \
     build-essential \
-    wget \
-    # Add additional dependencies here \
+    ca-certificates \
+    curl \
+    make \
+    # Add additional dependencies here
     && apt-get clean \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/*
@@ -18,9 +23,10 @@ RUN apt-get update && apt-get install -y \
 RUN mkdir -p /data /output /opt/tool
 
 # Download and install tool
-RUN wget -P /opt/tool -O /opt/tool/tool.tar.gz https://example.com/tool/download/url
-RUN tar -xzf /opt/tool/tool.tar.gz -C /opt/tool --strip-components=1 --no-same-owner \
-    && cd /opt/tool \
+RUN curl -LsSf https://URLTODOWNLOAD.com/whatever/this/link/is.tar.gz \
+    | tar xzv -C /tmp/tool --strip-components=1 --no-same-owner \
+    ... stuff for installation \
+    && cd /tmp/tool \
     && ./configure --your-configure-options \
     && make \
     && make install

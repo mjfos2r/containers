@@ -1,7 +1,8 @@
 FROM python:3.11-slim
 
 # Metadata labels using OCI standard format
-LABEL org.opencontainers.image.authors="<mfoster11@mgh.harvard.edu>" \
+LABEL \
+    org.opencontainers.image.authors="<mfoster11@mgh.harvard.edu>" \
     org.opencontainers.image.source="https://github.com/mjfos2r/containers/trycycler" \
     org.opencontainers.image.description="python3.11-slim container with Trycycler assembler" \
     org.opencontainers.image.version="1.0.0"
