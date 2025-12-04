@@ -22,6 +22,7 @@ RUN apt-get update && apt-get install -y \
     zlib1g-dev \
     libomp-dev \
     make \
+    git \
     # add more deps here
     && apt-get clean \
     && apt-get autoremove \
@@ -31,18 +32,19 @@ WORKDIR /opt
 
 # Install cd-hit
 RUN mkdir -p /tmp/cd-hit \
-    && curl -lsSf https://github.com/weizhongli/cdhit/releases/download/V4.8.1/cd-hit-v4.8.1-2019-0228.tar.gz \
-    | tar xzvf - -C /tmp/cd-hit --strip-components=1 --no-same-owner \
+    && curl -LsSf https://github.com/weizhongli/cdhit/releases/download/V4.8.1/cd-hit-v4.8.1-2019-0228.tar.gz \
+    | tar -xzv -C /tmp/cd-hit --strip-components=1 --no-same-owner \
     && cd /tmp/cd-hit \
+    && make \
     && make install \
     && cd - \
     && rm -rf /tmp/cd-hit
 
 # Install mafft
 RUN mkdir -p /tmp/mafft \
-    && curl -lsSf https://mafft.cbrc.jp/alignment/software/mafft-7.525-with-extensions-src.tgz \
-    | tar xzvf - -C /tmp/mafft --strip-components=1 --no-same-owner \
-    && cd /tmp/mafft \
+    && curl -LsSf https://mafft.cbrc.jp/alignment/software/mafft-7.525-with-extensions-src.tgz \
+    | tar -xzv -C /tmp/mafft --strip-components=1 --no-same-owner \
+    && cd /tmp/mafft/core \
     && make clean \
     && make \
     && make install \
@@ -50,16 +52,16 @@ RUN mkdir -p /tmp/mafft \
     && rm -rf /tmp/cd-hit
 
 # Download mash binary
-RUN curl -lsSf https://github.com/marbl/Mash/releases/download/v2.3/mash-Linux64-v2.3.tar \
+RUN curl -LsSf https://github.com/marbl/Mash/releases/download/v2.3/mash-Linux64-v2.3.tar \
     | tar -xv --strip-components=1 --no-same-owner -C /usr/local/bin \
     && chmod +x /usr/local/bin/mash \
     && rm /usr/local/bin/LICENSE.txt
 
 # Download Prank binary
 RUN mkdir -p /tmp/prank \
-    && curl -lsSf https://github.com/ariloytynoja/prank-msa/blob/master/binaries/prank.linux64.251117.tgz \
-    | tar xzvf - -C /tmp/prank --strip-components=1 --no-same-owner \
-    && cp /tmp/prank/bin/* /usr/local/bin/
+    && curl -LsSf http://wasabiapp.org/download/prank/prank.linux64.170427.tgz \
+    | tar -xzv -C /tmp/prank --strip-components=1 --no-same-owner \
+    && cp -r /tmp/prank/bin/* /usr/local/bin/
 
 # install panaroo from pip
 RUN uv tool install git+https://github.com/gtonkinhill/panaroo
