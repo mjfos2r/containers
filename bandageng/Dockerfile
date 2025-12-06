@@ -14,6 +14,8 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     curl \
     qt6-base-dev \
+    qt6-svg-dev \
+    libxkbcommon-dev \
     # Add additional dependencies here
     && apt-get clean \
     && apt-get autoremove \
