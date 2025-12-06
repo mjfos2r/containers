@@ -46,8 +46,11 @@ RUN for cmd in BandageNG; do \
     command -v cmd &>/dev/null || exit 1; \
 done
 
+# set env variables so that QT doesn't complain and ruin the text output.
+ENV QT_QPA_PLATFORM=offscreen
+ENV XDG_RUNTIME_DIR=/tmp/runtime-root
+
 # Set working directory
 WORKDIR /opt
-
 # Set entrypoint
 ENTRYPOINT [ "/bin/bash" ]
