@@ -25,7 +25,7 @@ RUN mkdir -p /tmp/bandageng
 # install cmake 4.2.0
 RUN curl -LsSf https://github.com/Kitware/CMake/releases/download/v4.2.0/cmake-4.2.0-linux-x86_64.sh > /tmp/cmake-install.sh \
     && /tmp/cmake-install.sh --skip-license --prefix=/usr/local \
-    rm /tmp/cmake-install.sh
+    && rm /tmp/cmake-install.sh
 
 # Download and install tool
 RUN curl -LsSf https://github.com/asl/BandageNG/archive/refs/tags/v2025.12.1.tar.gz \
