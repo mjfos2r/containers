@@ -6,7 +6,7 @@ LABEL \
     org.opencontainers.image.authors="<mfoster11@mgh.harvard.edu>" \
     org.opencontainers.image.url="https://github.com/mjfos2r/containers/raxml-ng" \
     org.opencontainers.image.description="Debian bookworm-slim container for raxml-ng v1.2.2" \
-    org.opencontainers.image.version="0.0.1"
+    org.opencontainers.image.version="1.2.2"
 
 # Install deps
 RUN apt-get update && apt-get install -y \

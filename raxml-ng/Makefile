@@ -1,5 +1,5 @@
-IMAGE_NAME = raxmlhpc
-VERSION = 0.0.1
+IMAGE_NAME = raxml-ng
+VERSION = 1.2.2
 
 TAG1 = mjfos2r/$(IMAGE_NAME):$(VERSION)
 TAG2 = mjfos2r/$(IMAGE_NAME):latest
