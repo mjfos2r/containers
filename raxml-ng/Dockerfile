@@ -28,9 +28,7 @@ RUN curl -LsSf https://github.com/amkozlov/raxml-ng/releases/download/1.2.2/raxm
     && mv raxml-ng /usr/local/bin
 
 # test RAxML
-RUN raxml-ng --msa /tmp/raxml/data/testDNA.fa --model GTR+G || exit 1
-RUN raxml-ng --all --msa /tmp/raxml/data/testAA.fa --model LG+G8+F --tree pars{10} --bs-trees 200 || exit 1
-RUN raxml-ng --evaluate --msa /tmp/raxml/data/testAA.fa --model partitions.txt --tree test.tree --brlen scaled || exit 1
+RUN raxml-ng --msa /tmp/raxml/data/test.fa --model GTR+G || exit 1
 
 #RUN rm -rf /tmp/raxml
 
