@@ -30,7 +30,7 @@ RUN curl -LsSf https://github.com/somme89/rapidNJ/archive/refs/tags/latest.tar.g
     && cp -R bin/* /usr/local/bin/
 
 # Verify installation
-RUN for cmd in rapidNJ; do \
+RUN for cmd in rapidnj; do \
     command -v cmd &>/dev/null || exit 1; \
 done
 
