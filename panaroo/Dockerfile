@@ -1,4 +1,4 @@
-FROM python:3.10-slim-bookworm
+FROM python:3.13-slim-bookworm
 COPY --from=ghcr.io/astral-sh/uv:0.9.15 /uv /uvx /bin/
 
 # OCI formatted labels
@@ -64,7 +64,7 @@ RUN mkdir -p /tmp/prank \
     && cp -r /tmp/prank/bin/* /usr/local/bin/
 
 # install panaroo from pip
-RUN uv tool install git+https://github.com/gtonkinhill/panaroo
+RUN uv tool install git+https://github.com/mjfos2r/panaroo
 
 # Verify installation
 RUN for cmd in cdhit mafft mash prank panaroo; do \
