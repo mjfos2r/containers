@@ -1,4 +1,4 @@
-FROM python:3.13-slim-bookworm
+FROM python:3.9-slim-bookworm
 COPY --from=ghcr.io/astral-sh/uv:0.9.15 /uv /uvx /bin/
 
 # OCI formatted labels
@@ -63,11 +63,21 @@ RUN mkdir -p /tmp/prank \
     | tar -xzv -C /tmp/prank --strip-components=1 --no-same-owner \
     && cp -r /tmp/prank/bin/* /usr/local/bin/
 
+# # install prodigal
+# RUN curl -LsSf https://github.com/hyattpd/Prodigal/releases/download/v2.6.3/prodigal.linux \
+#     -o /usr/local/bin/prodigal \
+#     && chmod +x /usr/local/bin/prodigal
+
+# install clustal
+RUN curl -LsSf http://www.clustal.org/omega/clustalo-1.2.4-Ubuntu-x86_64 \
+    -o /usr/local/bin/clustalo \
+    && chmod +x /usr/local/bin/clustalo
+
 # install panaroo from pip
 RUN uv tool install git+https://github.com/mjfos2r/panaroo
 
 # Verify installation
-RUN for cmd in cdhit mafft mash prank panaroo; do \
+RUN for cmd in cdhit mafft mash prank clustalo panaroo; do \
     command -v cmd &>/dev/null || exit 1; \
     done
 
