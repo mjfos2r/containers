@@ -21,7 +21,7 @@ ENV PATH="/opt/conda/envs/autocycler/bin:$PATH"
 ENV PLASSEMBLER_DB="/usr/local/share/plassembler/db"
 
 # Autocycler binary
-RUN curl -L -o autocycler.tar.gz https://github.com/rrwick/Autocycler/releases/download/v0.5.1/autocycler-linux-x86_64-musl-v0.5.1.tar.gz \
+RUN curl -L -o autocycler.tar.gz https://github.com/rrwick/Autocycler/releases/download/v0.5.2/autocycler-linux-x86_64-musl-v0.5.2.tar.gz \
     && tar -xzf autocycler.tar.gz \
     && mv autocycler /opt/conda/envs/autocycler/bin/ \
     && rm autocycler.tar.gz
