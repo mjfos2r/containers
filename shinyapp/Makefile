@@ -1,5 +1,5 @@
-IMAGE_NAME = autocycler
-VERSION = 0.5.2
+IMAGE_NAME = shinyapp
+VERSION = 0.0.1
 
 TAG1 = mjfos2r/$(IMAGE_NAME):$(VERSION)
 TAG2 = mjfos2r/$(IMAGE_NAME):latest
