@@ -33,7 +33,8 @@ WORKDIR /opt/
 # Install autocycler 0.5.2 via cargo
 RUN git clone https://github.com/rrwick/Autocycler.git \
     && cd Autocycler \
-    && cargo build --release
+    && cargo build --release \
+    && mv target/release/autocycler /usr/local/bin
 
 WORKDIR /
 
