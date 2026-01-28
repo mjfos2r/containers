@@ -20,6 +20,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     ca-certificates \
     wget \
+    git \
     && apt-get clean \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/*
@@ -28,8 +29,13 @@ RUN apt-get update && apt-get install -y \
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 ENV PATH="/root/.cargo/bin:$PATH"
 
+WORKDIR /opt/
 # Install autocycler 0.5.2 via cargo
-RUN cargo install autocycler --version 0.5.2
+RUN git clone https://github.com/rrwick/Autocycler.git \
+    && cd Autocycler \
+    && cargo build --release
+
+WORKDIR /
 
 # Install seqkit
 RUN wget -qO- https://github.com/shenwei356/seqkit/releases/download/v2.8.0/seqkit_linux_amd64.tar.gz \
