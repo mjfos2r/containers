@@ -57,5 +57,6 @@ VOLUME ["/renders", "/projects"]
 WORKDIR /renders
 # copy the graph import script
 COPY import_3d_graph.py /usr/local/bin/import_3d_graph.py
+COPY render_gpu.py /usr/local/bin/render_gpu.py
 # Set entrypoint
 ENTRYPOINT [ "/bin/bash" ]
