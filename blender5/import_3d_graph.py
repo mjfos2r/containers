@@ -14,7 +14,7 @@ import numpy as np
 
 # ── SETTINGS ──────────────────────────────────────────────────────────────────
 
-SCRIPT_DIR = "/Users/michaelfoster/claudes-room/blender"
+SCRIPT_DIR = "/project"
 LAYOUT_PATH = os.path.join(SCRIPT_DIR, "layout_3d.json")
 
 TUBE_RADIUS_MIN = 0.06
