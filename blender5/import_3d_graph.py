@@ -14,7 +14,7 @@ import numpy as np
 
 # ── SETTINGS ──────────────────────────────────────────────────────────────────
 
-SCRIPT_DIR = "/projects"
+SCRIPT_DIR = "/Users/michaelfoster/claudes-room/blender"
 LAYOUT_PATH = os.path.join(SCRIPT_DIR, "layout_3d.json")
 
 TUBE_RADIUS_MIN = 0.06
@@ -110,14 +110,37 @@ def create_collection(name):
     return col
 
 
+def _bsdf_input(bsdf, *names):
+    """Find a BSDF input by trying multiple names (handles API changes across versions)."""
+    for name in names:
+        if name in bsdf.inputs:
+            return bsdf.inputs[name]
+    return None
+
+
 def _configure_principled(bsdf):
     """Configure a Principled BSDF for a wet biological/organic look."""
     bsdf.inputs['Roughness'].default_value = 0.25
-    bsdf.inputs['Specular'].default_value = 0.6
-    bsdf.inputs['Subsurface'].default_value = 0.15
-    bsdf.inputs['Subsurface Radius'].default_value = (0.1, 0.05, 0.03)
-    bsdf.inputs['Clearcoat'].default_value = 0.3
-    bsdf.inputs['Clearcoat Roughness'].default_value = 0.1
+
+    inp = _bsdf_input(bsdf, 'Specular IOR Level', 'Specular')
+    if inp:
+        inp.default_value = 0.6
+
+    inp = _bsdf_input(bsdf, 'Subsurface Weight', 'Subsurface')
+    if inp:
+        inp.default_value = 0.15
+
+    inp = _bsdf_input(bsdf, 'Subsurface Radius')
+    if inp:
+        inp.default_value = (0.1, 0.05, 0.03)
+
+    inp = _bsdf_input(bsdf, 'Coat Weight', 'Clearcoat')
+    if inp:
+        inp.default_value = 0.3
+
+    inp = _bsdf_input(bsdf, 'Coat Roughness', 'Clearcoat Roughness')
+    if inp:
+        inp.default_value = 0.1
 
 
 def make_vcol_material(name):
@@ -139,7 +162,9 @@ def make_vcol_material(name):
     attr.attribute_type = 'GEOMETRY'
 
     tree.links.new(attr.outputs['Color'], bsdf.inputs['Base Color'])
-    tree.links.new(attr.outputs['Color'], bsdf.inputs['Subsurface Color'])
+    ssc = _bsdf_input(bsdf, 'Subsurface Color')
+    if ssc:
+        tree.links.new(attr.outputs['Color'], ssc)
     tree.links.new(bsdf.outputs[0], output.inputs[0])
     return mat
 
@@ -157,7 +182,9 @@ def make_flat_material(name, color):
     bsdf.location = (100, 0)
     _configure_principled(bsdf)
     bsdf.inputs['Base Color'].default_value = color
-    bsdf.inputs['Subsurface Color'].default_value = color
+    ssc = _bsdf_input(bsdf, 'Subsurface Color')
+    if ssc:
+        ssc.default_value = color
 
     tree.links.new(bsdf.outputs[0], output.inputs[0])
     return mat
@@ -227,7 +254,9 @@ def make_sequence_texture_material(name, image):
     tree.links.new(separate.outputs['X'], combine.inputs['X'])
     tree.links.new(combine.outputs['Vector'], tex.inputs['Vector'])
     tree.links.new(tex.outputs['Color'], bsdf.inputs['Base Color'])
-    tree.links.new(tex.outputs['Color'], bsdf.inputs['Subsurface Color'])
+    ssc = _bsdf_input(bsdf, 'Subsurface Color')
+    if ssc:
+        tree.links.new(tex.outputs['Color'], ssc)
     tree.links.new(bsdf.outputs[0], output.inputs[0])
 
     return mat
@@ -711,8 +740,17 @@ def setup_scene(data, collection):
     scene.render.film_transparent = False
 
     # Color management — filmic for realistic dynamic range
-    scene.view_settings.view_transform = 'Filmic'
-    scene.view_settings.look = 'Medium Contrast'
+    try:
+        scene.view_settings.view_transform = 'Filmic'
+    except TypeError:
+        scene.view_settings.view_transform = 'AgX'
+    try:
+        scene.view_settings.look = 'Medium Contrast'
+    except TypeError:
+        try:
+            scene.view_settings.look = 'AgX - Medium Contrast'
+        except TypeError:
+            pass
     scene.view_settings.exposure = 0.5
 
     # ── Compositor: subtle grain + glare ──
