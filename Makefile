@@ -31,6 +31,18 @@ new-py:
 	&& sed "s|IMGNAMEPLACEHOLDER|$$NEWIMG|g" "$$DOCKERFILE" >"$$NEWIMG/Dockerfile" \
 	&& sed "s|IMGNAMEPLACEHOLDER|$$NEWIMG|g" "$$MAKEFILE" >"$$NEWIMG/Makefile"
 
+.PHONY: new-cuda
+new-cuda:
+	@if [ -z "$(ARG)" ]; then echo "ERROR: container name required. Try again."; exit 1; fi
+	@NEWIMG="$(ARG)" ; \
+	TMPS="templates" ; \
+	MAKEFILE="templates/Makefile-template" ; \
+	DOCKERFILE="templates/Dockerfile-cuda13-ubuntu24-04" ; \
+	echo "----- Initializing new debian bookworm container: $$NEWIMG -----" \
+	&& mkdir -p "$$NEWIMG" \
+	&& sed "s|IMGNAMEPLACEHOLDER|$$NEWIMG|g" "$$DOCKERFILE" >"$$NEWIMG/Dockerfile" \
+	&& sed "s|IMGNAMEPLACEHOLDER|$$NEWIMG|g" "$$TMPS/Makefile-template" >"$$NEWIMG/Makefile"
+
 clean-containers:
 	rm $(CONTAINERS_FILE)
 
