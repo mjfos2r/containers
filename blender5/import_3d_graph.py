@@ -755,31 +755,34 @@ def setup_scene(data, collection):
 
     # ── Compositor: subtle grain + glare ──
     scene.use_nodes = True
-    comp = scene.node_tree
-    comp.nodes.clear()
+    comp = getattr(scene, 'node_tree', None)
+    if comp is None:
+        print("  Compositor node tree not available, skipping post-processing")
+    else:
+        comp.nodes.clear()
 
-    rl = comp.nodes.new('CompositorNodeRLayers')
-    rl.location = (0, 0)
+        rl = comp.nodes.new('CompositorNodeRLayers')
+        rl.location = (0, 0)
 
-    # Soft glare (bloom-like in Cycles)
-    glare = comp.nodes.new('CompositorNodeGlare')
-    glare.location = (200, 0)
-    glare.glare_type = 'FOG_GLOW'
-    glare.threshold = 1.2
-    glare.size = 6
-    glare.quality = 'HIGH'
+        # Soft glare (bloom-like in Cycles)
+        glare = comp.nodes.new('CompositorNodeGlare')
+        glare.location = (200, 0)
+        glare.glare_type = 'FOG_GLOW'
+        glare.threshold = 1.2
+        glare.size = 6
+        glare.quality = 'HIGH'
 
-    # Lens distortion for subtle chromatic aberration
-    lens = comp.nodes.new('CompositorNodeLensdist')
-    lens.location = (400, 0)
-    lens.inputs['Dispersion'].default_value = 0.01
+        # Lens distortion for subtle chromatic aberration
+        lens = comp.nodes.new('CompositorNodeLensdist')
+        lens.location = (400, 0)
+        lens.inputs['Dispersion'].default_value = 0.01
 
-    comp_out = comp.nodes.new('CompositorNodeComposite')
-    comp_out.location = (600, 0)
+        comp_out = comp.nodes.new('CompositorNodeComposite')
+        comp_out.location = (600, 0)
 
-    comp.links.new(rl.outputs['Image'], glare.inputs['Image'])
-    comp.links.new(glare.outputs['Image'], lens.inputs['Image'])
-    comp.links.new(lens.outputs['Image'], comp_out.inputs['Image'])
+        comp.links.new(rl.outputs['Image'], glare.inputs['Image'])
+        comp.links.new(glare.outputs['Image'], lens.inputs['Image'])
+        comp.links.new(lens.outputs['Image'], comp_out.inputs['Image'])
 
 
 # ── MAIN ──────────────────────────────────────────────────────────────────────
