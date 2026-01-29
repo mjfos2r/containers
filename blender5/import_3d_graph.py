@@ -14,7 +14,7 @@ import numpy as np
 
 # ── SETTINGS ──────────────────────────────────────────────────────────────────
 
-SCRIPT_DIR = "/project"
+SCRIPT_DIR = "/projects"
 LAYOUT_PATH = os.path.join(SCRIPT_DIR, "layout_3d.json")
 
 TUBE_RADIUS_MIN = 0.06
