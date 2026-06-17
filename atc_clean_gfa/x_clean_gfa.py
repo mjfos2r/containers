@@ -8,9 +8,9 @@ Usage:
 Options:
     --min_depth FLOAT       Remove nodes at or below this depth
     --max_depth FLOAT       Remove nodes above this depth
-    --split_telos NODES     Comma-separated telomere apex nodes to split at the dyad
+    --split_telos NODES     Comma-separated telomere nodes to split at center
     --remove NODES          Comma-separated nodes to remove
-    --duplicate NODES       Comma-separated nodes to duplicate for TIRs
+    --keep left|right       Which half to keep when splitting [default: left]
     --min_length INT        Minimum contig length for FASTA output [default: 0]
 
 Example:
@@ -153,161 +153,88 @@ def filter_depth(segments, links, min_depth=None, max_depth=None, logger=None):
     return new_segments, new_links
 
 
-def _format_split(seq, kept, keep):
-    """Return (orig_line, kept_line, mark_line) with the kept arm aligned under
-    its origin position in seq, and a caret marking the dyad cut."""
-    mid = len(seq) - len(kept) if keep == 'right' else 0
-    orig_line = seq
-    kept_line = (' ' * mid) + kept
-    cut = len(kept) if keep == 'left' else mid
-    mark_line = (' ' * cut) + '^'
-    return orig_line, kept_line, mark_line
-
-
-def _rc_link(l):
-    """Reverse-complement of a GFA link: (f,fo,t,to) -> (t,~to,f,~fo).
-    This graph represents every link in BOTH directions explicitly, so any
-    retained/rewired link must keep its reciprocal too or autocycler's
-    check_links panics with 'missing next link'."""
-    flip = {'+': '-', '-': '+'}
-    return ['L', l[3], flip[l[4]], l[1], flip[l[2]], l[5] if len(l) > 5 else '0M']
-
-
-def _apex_backbone(t, links):
-    """If t is a telomere apex, return (backbone_id, matching_link).
-
-    Apex == every external link of t goes to ONE backbone segment, and there is
-    exactly one strand-matching forward edge `B s -> t s` (same sign), which is
-    the walk edge that fixes the kept arm. Returns (None, None) to abstain:
-    multiple distinct neighbors (internal node/tangle), pure self-fold
-    (already-closed end), or ambiguous entry.
-    """
-    neighbors, matching, self_links = set(), [], 0
-    for l in links:
-        fn, fo, tn, to = l[1], l[2], l[3], l[4]
-        if t not in (fn, tn):
-            continue
-        if fn == tn == t:                 # self-fold link
-            self_links += 1
-            continue
-        neighbors.add(tn if fn == t else fn)
-        if tn == t and fo == to:          # B s -> t s : strand-matching forward edge
-            matching.append(l)
-    if self_links and not neighbors:
-        return None, None                 # already-closed hairpin / artifact
-    if len(neighbors) != 1 or len(matching) != 1:
-        return None, None                 # internal, tangled, or ambiguous -> abstain
-    return next(iter(neighbors)), matching[0]
-
-
-def split_telomeres(segments, links, telo_nodes, logger=None):
-    """Split telomere apex nodes at the dyad, keeping the strand-contiguous arm.
-
-    Keep-side is not a parameter: the matching backbone edge (B s -> t s) fixes
-    which arm stays contiguous (s == '+' -> keep 5' half; s == '-' -> keep 3'
-    half). For each split apex we retain:
-      (1) the backbone attachment, rewired to the clipped node, and
-      (2) a dyad self-closure (new+ -> new- and new- -> new+), the same form
-          intact backbone hairpins use (e.g. 1+ -> 1- / 1- -> 1+), which closes
-          the cut face so the terminus is traversable.
-    All other links touching the apex (the uncut hairpin's fold-back) are dropped.
-    Non-apex nodes are abstained on and left untouched for manual handling.
-    """
+def split_telomeres(segments, links, telo_nodes, keep='left', logger=None):
+    """Split telomere nodes at center, keeping one half."""
     if not telo_nodes:
         return segments, links
 
+    # Validate nodes exist
     missing = set(telo_nodes) - set(segments.keys())
-    if missing and logger:
-        logger.log(f"Warning: telomere nodes not found: {sorted(missing)}")
-    telo_nodes = [n for n in telo_nodes if n in segments]
+    if missing:
+        if logger:
+            logger.log(f"Warning: telomere nodes not found: {missing}")
+        telo_nodes = [n for n in telo_nodes if n not in missing]
+
     if not telo_nodes:
         return segments, links
 
     if logger:
-        logger.log("Splitting telomere nodes [walk-derived]:")
+        logger.log(f"Splitting telomere nodes (keeping {keep} half):")
 
-    max_id = max(int(n) for n in segments.keys() if n.isdigit())
+    # Find max node ID
+    max_id = max(int(n) for n in segments.keys())
+
+    # Map old node IDs to new
     node_mapping = {}
 
-    for t in telo_nodes:
-        backbone, match = _apex_backbone(t, links)
-        if backbone is None:
-            if logger:
-                logger.log(f"  Node {t}: not a clean apex -> SKIP (abstain, manual handling)")
-            continue
-
-        match_orient = match[4]                       # t's orientation in the matching edge
-        keep = 'left' if match_orient == '+' else 'right'
-        seq = segments[t]['seq']
-        mid = len(seq) // 2                            # TODO(next): dyad-finder
-        kept_seq = seq[:mid] if keep == 'left' else seq[mid:]
+    for target_node in telo_nodes:
         new_id = str(max_id + 1)
         max_id += 1
 
+        seq = segments[target_node]['seq']
+        mid = len(seq) // 2
+        kept_seq = seq[:mid] if keep == 'left' else seq[mid:]
+
         if logger:
-            logger.log(f"  Node {t} ({len(seq)} bp) apex of {backbone}, "
-                       f"matching edge {match[1]}{match[2]}->{match[3]}{match[4]}, "
-                       f"keep {keep} -> Node {new_id} ({len(kept_seq)} bp), dyad terminus")
-            o, k, m = _format_split(seq, kept_seq, keep)
-            logger.log(f"    Original: {o}")
-            logger.log(f"    Kept:     {k}")
-            logger.log(f"    Dyad:     {m}")
+            logger.log(f"  Node {target_node} ({len(seq)} bp) -> Node {new_id} ({len(kept_seq)} bp)")
+            logger.log(f"    Original: {seq}")
+            logger.log(f"    Kept:     {kept_seq}")
 
-        node_mapping[t] = {'new_id': new_id, 'seq': kept_seq,
-                           'tags': segments[t]['tags'], 'keep': keep,
-                           'keep_keys': {tuple(match[1:5]),
-                                         tuple(_rc_link(match)[1:5])}}
+        node_mapping[target_node] = {
+            'new_id': new_id,
+            'seq': kept_seq,
+            'tags': segments[target_node]['tags']
+        }
 
-    if not node_mapping:
-        if logger:
-            logger.log("  No telomere nodes split (all abstained or missing).")
-        return segments, links
-
-    # Rebuild segments (rename split apexes to their new IDs).
+    # Build new segments
     new_segments = {}
-    for nid, data in segments.items():
-        if nid in node_mapping:
-            info = node_mapping[nid]
+    for node_id, data in segments.items():
+        if node_id in node_mapping:
+            info = node_mapping[node_id]
             new_segments[info['new_id']] = {'seq': info['seq'], 'tags': info['tags']}
         else:
-            new_segments[nid] = data
+            new_segments[node_id] = data
 
-    # Rebuild links:
-    #   - links not touching a split node pass through unchanged
-    #   - for a split node, keep its matching backbone edge AND that edge's
-    #     reverse complement (both are present in this graph's dual
-    #     representation), rewired to the clipped node; drop every other link
-    #     touching it (the uncut hairpin fold-back).
+    # Update links
     new_links = []
-    for l in links:
-        fn, tn = l[1], l[3]
-        if fn not in node_mapping and tn not in node_mapping:
-            new_links.append(l)
-            continue
-        key = tuple(l[1:5])
-        is_keeper = any(n in node_mapping and key in node_mapping[n]['keep_keys']
-                        for n in (fn, tn))
-        if not is_keeper:
-            continue                                   # fold-back / extra link -> drop
-        nl = l[:]
-        for idx in (1, 3):                             # rewire whichever endpoint(s) are split
-            n = l[idx]
-            if n in node_mapping and key in node_mapping[n]['keep_keys']:
-                nl[idx] = node_mapping[n]['new_id']
-        new_links.append(nl)
+    for link in links:
+        from_node, from_orient, to_node, to_orient = link[1:5]
+        overlap = link[5] if len(link) > 5 else '0M'
 
-    # Dyad self-closure: ONE link per clipped apex, on the terminal (non-backbone)
-    # face. The apex attaches to the backbone on one strand; the opposite face is
-    # the cut/dyad end and is the one that closes. keep='left' -> backbone at 5',
-    # terminal face is 3' -> (nid+ -> nid-); keep='right' -> backbone at 3',
-    # terminal face is 5' -> (nid- -> nid+). Matches the +->- closure form of the
-    # intact backbone hairpins.
-    for info in node_mapping.values():
-        nid = info['new_id']
-        if info['keep'] == 'left':
-            new_links.append(['L', nid, '+', nid, '-', '0M'])
-        else:  # keep == 'right'
-            new_links.append(['L', nid, '-', nid, '+', '0M'])
+        skip = False
+        new_from = from_node
+        new_to = to_node
+
+        if from_node in node_mapping:
+            info = node_mapping[from_node]
+            if keep == 'left' and from_orient == '+':
+                skip = True
+            elif keep == 'right' and from_orient == '-':
+                skip = True
+            else:
+                new_from = info['new_id']
+
+        if to_node in node_mapping:
+            info = node_mapping[to_node]
+            if keep == 'left' and to_orient == '-':
+                skip = True
+            elif keep == 'right' and to_orient == '+':
+                skip = True
+            else:
+                new_to = info['new_id']
+
+        if not skip:
+            new_links.append(['L', new_from, from_orient, new_to, to_orient, overlap])
 
     return new_segments, new_links
 
@@ -401,8 +328,10 @@ def main():
     parser.add_argument('output_prefix', help='Output prefix for GFA and FASTA files')
     parser.add_argument('--min_depth', type=float, help='Remove nodes at or below this depth')
     parser.add_argument('--max_depth', type=float, help='Remove nodes above this depth')
-    parser.add_argument('--split_telos', help='Comma-separated telomere apex nodes to split')
+    parser.add_argument('--split_telos', help='Comma-separated telomere nodes to split')
     parser.add_argument('--remove', help='Comma-separated nodes to remove')
+    parser.add_argument('--keep', choices=['left', 'right'], default='left',
+                        help='Which half to keep when splitting telomeres [default: left]')
     parser.add_argument('--duplicate', help='Comma-separated nodes to duplicate for TIR resolution.')
     parser.add_argument('--min_length', type=int, default=0,
                         help='Minimum contig length for FASTA output [default: 0]')
@@ -424,11 +353,12 @@ def main():
         logger.log(f"  Split telomeres: {args.split_telos}")
     if args.remove:
         logger.log(f"  Remove nodes: {args.remove}")
+    logger.log(f"  Keep half: {args.keep}")
     if args.min_length > 0:
         logger.log(f"  Min contig length: {args.min_length}")
     logger.log("")
 
-    # Parse node lists
+   # Parse node lists
     telo_nodes = args.split_telos.replace(' ', '').split(',') if args.split_telos else []
     remove_list = args.remove.replace(' ', '').split(',') if args.remove else []
 
@@ -445,10 +375,10 @@ def main():
         logger.log("")
         segments, links = filter_depth(segments, links, min_depth=None, max_depth=args.max_depth, logger=logger)
 
-    # Step 2: Split telomeres (user-specified apex node IDs; keep-side from links)
+    # Step 2: Split telomeres (user-specified node IDs)
     if telo_nodes:
         logger.log("")
-        segments, links = split_telomeres(segments, links, telo_nodes, logger=logger)
+        segments, links = split_telomeres(segments, links, telo_nodes, args.keep, logger)
 
     # Step 3: Remove specified nodes (user-specified node IDs)
     if remove_list:
